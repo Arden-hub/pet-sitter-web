@@ -2,56 +2,51 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>評價與建議 - 鏟屎官到你家</title>
+    <title>意見回饋</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; padding: 40px; color: #5d4037; text-align: center; }
-        .form-box { background: white; padding: 30px; border-radius: 20px; max-width: 450px; margin: 0 auto; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        .star-input { font-size: 2.5rem; color: #e0e0e0; cursor: pointer; margin: 15px 0; display: block; }
-        .star-input span.active { color: #f1c40f; }
-        select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin: 10px 0; font-size: 1rem; box-sizing: border-box; }
-        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 50px; }
+        .box { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; }
+        .stars span { font-size: 2rem; color: #ccc; cursor: pointer; }
+        .stars span.active { color: #f1c40f; }
+        select, textarea, button { width: 100%; margin: 10px 0; padding: 10px; border-radius: 10px; border: 1px solid #ddd; }
+        button { background: #e67e22; color: white; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="form-box">
-        <h2>🐾 您的意見回饋</h2>
-        <select id="nannyName">
-            <option value="一般性建議">💡 一般性建議 / 其他</option>
+    <div class="box">
+        <h2>🐾 意見回饋</h2>
+        <select id="n">
+            <option value="一般性建議">💡 一般性建議</option>
             <option value="Mio">Mio</option><option value="阿強">阿強</option>
             <option value="小花">小花</option><option value="Yuki">Yuki</option>
             <option value="阿明">阿明</option><option value="Bella">Bella</option>
             <option value="Kevin">Kevin</option><option value="莉莉">莉莉</option>
             <option value="Nana">Nana</option><option value="大王">大王</option>
         </select>
-        <div class="star-input" id="starGroup">
-            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+        <div class="stars" id="sg">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
         </div>
-        <textarea id="content" rows="4" placeholder="請分享您的心得..."></textarea>
-        <button onclick="submitFB()">送出回饋</button>
+        <textarea id="c" placeholder="您的建議..."></textarea>
+        <button onclick="send()">送出回饋</button>
     </div>
-
     <script>
-        let currentRating = 0;
-        const stars = document.querySelectorAll('#starGroup span');
-        stars.forEach(s => {
+        let cur = 0;
+        document.querySelectorAll('#sg span').forEach(s => {
             s.onclick = function() {
-                currentRating = this.getAttribute('data-val');
-                stars.forEach(st => st.classList.toggle('active', st.getAttribute('data-val') <= currentRating));
-            };
+                cur = this.dataset.v;
+                document.querySelectorAll('#sg span').forEach(x => x.classList.toggle('active', x.dataset.v <= cur));
+            }
         });
-
-        async function submitFB() {
-            const nanny = document.getElementById('nannyName').value;
-            const content = document.getElementById('content').value;
-            if(nanny !== "一般性建議" && currentRating === 0) return alert('請評分');
-            if(!content) return alert('請填寫內容');
-
-            const res = await fetch('/api/submit_feedback', {
+        async function send() {
+            const n = document.getElementById('n').value;
+            const c = document.getElementById('c').value;
+            if(!c || (n!=='一般性建議' && cur==0)) return alert('請填寫完整');
+            await fetch('/api/submit_feedback', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nanny, stars: currentRating || 5, content })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({nanny:n, stars:cur||5, content:c})
             });
-            if(res.ok) { alert('感謝回饋！'); window.location.href='/nanny'; }
+            alert('感謝回饋'); window.location.href='/nanny';
         }
     </script>
 </body>

@@ -2,90 +2,42 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>保母團隊 - 鏟屎官到你家</title>
+    <title>保母團隊</title>
     <style>
-        :root { --primary: #e67e22; --bg: #fff9f0; --text: #5d4037; --card-bg: #ffffff; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .nanny-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .nanny-card { background: var(--card-bg); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); text-align: center; border: 1px solid rgba(230,126,34,0.1); transition: 0.3s; }
-        .nanny-card:hover { transform: translateY(-5px); }
-        .nanny-photo-wrapper { width: 100%; aspect-ratio: 4/5; background: #fafafa; display: flex; align-items: center; justify-content: center; }
-        .nanny-photo { width: 100%; height: 100%; object-fit: contain; }
-        .nanny-info { padding: 15px; }
-        .nanny-name { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
-        .nanny-slogan { font-size: 0.9rem; color: #e67e22; font-weight: bold; margin: 5px 0; display: block; }
-        .star-rating { color: #f1c40f; font-size: 1.1rem; margin: 5px 0; }
-        .star-gray { color: #e0e0e0; }
-        .review-count { font-size: 0.85rem; color: #a1887f; }
-        .btn-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        .btn-home { background: white; color: var(--text); border: 1px solid #ddd; }
-        .btn-fb { background: var(--primary); color: white; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .card { background: white; border-radius: 15px; overflow: hidden; text-align: center; padding-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .img-box { width: 100%; aspect-ratio: 4/5; background: #eee; }
+        .img-box img { width: 100%; height: 100%; object-fit: contain; }
+        .name { font-weight: bold; color: #e67e22; font-size: 1.2rem; margin: 10px 0; }
+        .stars { color: #f1c40f; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="btn-group">
-        <a href="/" class="btn btn-home">← 首頁</a>
-        <a href="/feedback" class="btn btn-fb">我要評價 / 給建議</a>
-    </div>
-    <div class="header"><h1>🐾 我們的保母團隊</h1></div>
-    <div id="nanny-list" class="nanny-grid"></div>
-</div>
-
-<script>
-    const nannies = [
-        { name: "Mio", slogan: "最細心有愛的溫暖陪伴" },
-        { name: "阿強", slogan: "活力充沛的大狗狗好夥伴" },
-        { name: "小花", slogan: "溫柔呵護，比主人更懂貓" },
-        { name: "Yuki", slogan: "專業觀察，給毛孩最安心的愛" },
-        { name: "阿明", slogan: "使命必達，全方位環境守護" },
-        { name: "Bella", slogan: "療癒系互動，毛孩不孤單" },
-        { name: "Kevin", slogan: "冷靜沉著，處理各種毛孩脾氣" },
-        { name: "莉莉", slogan: "潔癖型鏟屎官，環境最乾淨" },
-        { name: "Nana", slogan: "親和力爆棚，毛孩第一眼就愛上" },
-        { name: "大王", slogan: "守時負責，提供最穩定的服務" }
-    ];
-
-    function generateStars(rating) {
-        let h = '';
-        for(let i=1; i<=5; i++) h += (i <= Math.round(rating)) ? '★' : '<span class="star-gray">★</span>';
-        return h;
-    }
-
-    async function init() {
-        const list = document.getElementById('nanny-list');
-        list.innerHTML = nannies.map(n => `
-            <div class="nanny-card">
-                <div class="nanny-photo-wrapper">
-                    <img src="/static/Photos of pet sitters/${n.name}.jpg" class="nanny-photo" onerror="this.src='https://via.placeholder.com/400x500?text=${n.name}'">
-                </div>
-                <div class="nanny-info">
-                    <div class="nanny-name">${n.name}</div>
-                    <span class="nanny-slogan">「${n.slogan}」</span>
-                    <div class="star-rating" id="stars-${n.name}">★ --</div>
-                    <div class="review-count" id="count-${n.name}">0 則評價</div>
-                </div>
-            </div>
-        `).join('');
-
-        const res = await fetch('/api/get_reviews');
-        const reviews = await res.json();
-        nannies.forEach(n => {
-            const nr = reviews.filter(r => r.nanny === n.name);
-            if (nr.length > 0) {
-                const avg = nr.reduce((s, r) => s + r.stars, 0) / nr.length;
-                document.getElementById(`stars-${n.name}`).innerHTML = `${generateStars(avg)} ${avg.toFixed(1)}`;
-                document.getElementById(`count-${n.name}`).innerHTML = `${nr.length} 則評價`;
-            } else {
-                document.getElementById(`stars-${n.name}`).innerHTML = `${generateStars(0)} 新加入`;
-            }
-        });
-    }
-    init();
-</script>
+    <h1 style="text-align:center; color:#e67e22;">🐾 我們的保母團隊</h1>
+    <div id="list" class="grid"></div>
+    <script>
+        const nannies = ["Mio","阿強","小花","Yuki","阿明","Bella","Kevin","莉莉","Nana","大王"];
+        async function load() {
+            const list = document.getElementById('list');
+            list.innerHTML = nannies.map(n => `
+                <div class="card">
+                    <div class="img-box"><img src="/static/Photos of pet sitters/${n}.jpg" onerror="this.src='https://via.placeholder.com/200x250'"></div>
+                    <div class="name">${n}</div>
+                    <div class="stars" id="s-${n}">★ 載入中</div>
+                </div>`).join('');
+            const res = await fetch('/api/get_reviews');
+            const data = await res.json();
+            nannies.forEach(n => {
+                const rs = data.filter(r => r.nanny === n);
+                const el = document.getElementById(`s-${n}`);
+                if(rs.length) {
+                    const avg = (rs.reduce((a,b)=>a+b.stars,0)/rs.length).toFixed(1);
+                    el.innerHTML = '★ '.repeat(Math.round(avg)) + avg;
+                } else { el.innerHTML = '★ 新加入'; }
+            });
+        }
+        load();
+    </script>
 </body>
 </html>
