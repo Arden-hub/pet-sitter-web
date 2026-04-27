@@ -132,23 +132,21 @@
 
     <section id="price" class="page">
         <h2 style="border-left: 6px solid var(--primary); padding-left: 15px;">🔹 費用試算</h2>
-        <div class="card">
-            <div class="calc-row"><span>預約趟數：</span><input type="number" id="days" value="1" min="1" oninput="calc()"></div>
-            <div class="calc-row"><span>單價時段：</span>
-                <select id="basePrice" onchange="calc()">
-                    <option value="500">一般平假日 ($500)</option>
-                    <option value="550">特別假日 ($550)</option>
-                    <option value="850">春節期間 ($850)</option>
-                </select>
-            </div>
-            <div class="calc-row"><span>毛孩數量 (第2隻+$50)：</span><input type="number" id="petCount" value="1" min="1" oninput="calc()"></div>
-            <div class="calc-row"><span>餵食營養品 (+$50)：</span><input type="number" id="suppCount" value="0" min="0" oninput="calc()"></div>
-            <div class="calc-row"><span>餵藥服務 (+$100)：</span><input type="number" id="pillCount" value="0" min="0" oninput="calc()"></div>
-            <div class="calc-row"><span>遛狗 (+$300, 續+$100)：</span><input type="number" id="walkCount" value="0" min="0" oninput="calc()"></div>
-            <div class="total-banner">
-                <span>預估總額</span>
-                <strong class="total-price" id="finalPrice">NT$ 500</strong>
-            </div>
+        <div class="card" style="text-align:center; padding: 40px 20px;">
+            <p style="font-weight: bold; color: var(--text-dark); margin-bottom: 20px; font-size: 1.1rem;">
+                🐾 想要精確試算服務費用嗎？
+            </p>
+            
+            <a href="https://asia-east1-project-8212b9e4-be2a-47e7-aa0.cloudfunctions.net/calculator_service" 
+            target="_blank" 
+            class="btn" 
+            style="text-decoration:none; display:inline-block; width: 220px; background-color: var(--primary); color: white; padding: 15px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                🚀 開啟雲端試算機
+            </a>
+            
+            <p style="font-size: 0.85rem; color: #777; margin-top: 15px;">
+                (點擊後將開啟新視窗進行即時試算)
+            </p>
         </div>
     </section>
 
@@ -275,18 +273,6 @@
                 console.error('Error:', error);
                 container.innerHTML = '<p style="color:red; text-align:center;">評價載入失敗</p>';
             });
-        }
-
-        function calc() {
-            const days = parseInt(document.getElementById('days').value) || 0;
-            const base = parseInt(document.getElementById('basePrice').value);
-            const pets = parseInt(document.getElementById('petCount').value);
-            const supps = parseInt(document.getElementById('suppCount').value);
-            const pills = parseInt(document.getElementById('pillCount').value);
-            const walks = parseInt(document.getElementById('walkCount').value);
-            let petExtra = (pets > 1) ? (pets - 1) * 50 : 0;
-            let single = base + petExtra + (supps*50) + (pills*100) + (walks > 0 ? 300+(walks-1)*100 : 0);
-            document.getElementById('finalPrice').innerText = `NT$ ${(single * days).toLocaleString()}`;
         }
 
         function toggleChat() {
