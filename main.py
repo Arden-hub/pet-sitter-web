@@ -85,7 +85,7 @@ def get_feedbacks():
 
 if __name__ == "__main__":
     # 設定 Port 8081
-    port = int(os.environ.get("PORT", 8082))
+    port = int(os.environ.get("PORT", 8080))
     print(f"🚀 鏟屎官伺服器啟動在 http://127.0.0.1:{port}")
     # debug=True 會在你改代碼時自動重啟，開發很方便
     app.run(host="0.0.0.0", port=port, debug=True)
