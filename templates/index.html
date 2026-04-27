@@ -59,19 +59,13 @@
 
         /* Forms & Cards */
         .card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 10px; width: 100%; box-sizing: border-box; }
-        input[type="number"] { width: 90px; }
         .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; }
-        .total-banner { background: var(--text-dark); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-top: 20px; }
-        .total-price { font-size: 2.2rem; color: var(--primary); font-weight: bold; display: block; }
         
         .social-practice { margin-top: 40px; padding: 30px; text-align: center; background: rgba(230, 126, 34, 0.08); border-radius: 20px; border: 2px dashed var(--accent); }
         .nanny-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .nanny-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; padding-bottom: 20px; border-top: 6px solid var(--primary); }
         .nanny-photo { width: 100%; height: 240px; object-fit: cover; }
 
-        /* 評分星星樣式：確保橫向且美觀 */
         .star-rating-input { display: flex; flex-direction: row; justify-content: center; gap: 8px; font-size: 32px; color: #ccc; cursor: pointer; margin: 10px 0 20px 0; }
         .star-rating-input span.active { color: #f1c40f; }
         .nanny-rating-stars { color: #f1c40f; font-size: 1.1rem; margin-top: 5px; }
@@ -116,37 +110,24 @@
                 <div class="product-text"><h3>專業</h3><p>標準化回報流程</p></div>
             </div>
         </div>
-        <div class="social-practice">
-            <p style="font-weight: bold;">🔗 連結更多“鏟屎官到你家”相關社群～看更多可愛貓咪～</p>
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top:10px;">
-                <a href="ig" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
-                <a href="fb" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 頁面</a>
-            </div>
-        </div>
     </section>
 
     <section id="nanny" class="page">
         <h2 style="border-left: 6px solid var(--primary); padding-left: 15px;">🔹 保母團隊</h2>
         <div class="nanny-grid" id="nannyContainer"></div>
+        
+        <h2 style="border-left: 6px solid var(--primary); padding-left: 15px; margin-top: 40px;">🔹 顧客評價</h2>
+        <div id="feedbackList">
+            <p style="text-align:center; color:#777;">評價載入中...</p>
+        </div>
     </section>
 
     <section id="price" class="page">
         <h2 style="border-left: 6px solid var(--primary); padding-left: 15px;">🔹 費用試算</h2>
         <div class="card" style="text-align:center; padding: 40px 20px;">
-            <p style="font-weight: bold; color: var(--text-dark); margin-bottom: 20px; font-size: 1.1rem;">
-                🐾 想要精確試算服務費用嗎？
-            </p>
-            
-            <a href="https://asia-east1-project-8212b9e4-be2a-47e7-aa0.cloudfunctions.net/calculator_service" 
-            target="_blank" 
-            class="btn" 
-            style="text-decoration:none; display:inline-block; width: 220px; background-color: var(--primary); color: white; padding: 15px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                🚀 開啟雲端試算機
-            </a>
-            
-            <p style="font-size: 0.85rem; color: #777; margin-top: 15px;">
-                (點擊後將開啟新視窗進行即時試算)
-            </p>
+            <p style="font-weight: bold; color: var(--text-dark); margin-bottom: 20px;">🐾 想要精確試算服務費用嗎？</p>
+            <a href="https://asia-east1-project-8212b9e4-be2a-47e7-aa0.cloudfunctions.net/calculator_service" target="_blank" class="btn" style="text-decoration:none; display:inline-block; width: 220px; border-radius: 30px;">🚀 開啟雲端試算機</a>
+            <p style="font-size: 0.85rem; color: #777; margin-top: 15px;">(點擊後將開啟新視窗進行即時試算)</p>
         </div>
     </section>
 
@@ -155,49 +136,15 @@
     <section id="feedback" class="page">
         <h2 style="border-left: 6px solid var(--primary); padding-left: 15px;">🔹 意見回饋</h2>
         <div class="card">
-            <input type="text" id="fbName" placeholder="您的姓名" style="margin-bottom:15px;">
-            
-            <p style="text-align:center; font-weight:bold; margin-bottom:5px;">保母評分 (點選星星)</p>
+            <input type="text" id="fbName" placeholder="您的姓名" style="margin-bottom:15px; padding:12px; width:100%; border-radius:10px; border:1px solid #ddd;">
             <div class="star-rating-input" id="starInput">
                 <span onclick="setStars(1)">★</span><span onclick="setStars(2)">★</span><span onclick="setStars(3)">★</span><span onclick="setStars(4)">★</span><span onclick="setStars(5)">★</span>
             </div>
-
-            <select id="fbNanny" style="margin-bottom:15px;"><option value="💡 一般建議">💡 一般建議</option></select>
-            <textarea id="fbContent" rows="4" placeholder="分享您的體驗..." style="margin-bottom:15px;"></textarea>
+            <select id="fbNanny" style="margin-bottom:15px; padding:12px; width:100%; border-radius:10px; border:1px solid #ddd;"><option value="💡 一般建議">💡 一般建議</option></select>
+            <textarea id="fbContent" rows="4" placeholder="分享您的體驗..." style="margin-bottom:15px; padding:12px; width:100%; border-radius:10px; border:1px solid #ddd;"></textarea>
             <button class="btn" onclick="submitFeedback()">送出評價</button>
         </div>
     </section>
-
-    <section id="admin" class="page"><h2>🔹 評價管理</h2><div id="admin" class="page" style="display:none;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0; color: #d7ccc8;">評價管理系統</h2>
-        <button onclick="showPage('feedback')" style="font-size: 0.8rem; padding: 5px 10px;">返回</button>
-    </div>
-    
-    <div id="adminList">
-        </div>
-</div><button class="btn" onclick="clearData()" style="background:#95a5a6; margin-top:20px;">清空數據</button></section>
-
-    <div id="chat-widget">
-        <div id="chat-button" onclick="toggleChat()"><img src="/static/index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;"></div>
-        <div id="chat-window">
-            <div id="chat-header"><span>Kiki 溫馨客服</span><span onclick="toggleChat()" style="cursor:pointer;">✕</span></div>
-            <div id="chat-messages">
-                <div class="msg msg-ai">
-                    喵嗚～歡迎來到鏟屎官到你家！🐾 我是 AI 助教 Kiki。<br><br>
-                    爸爸媽媽出門時，就讓 Kiki 守護毛孩吧！❤️ 輸入關鍵字讓我為你解答：<br><br>
-                    💰 **「多少錢」**：服務收費<br>
-                    🐱 **「保母」**：夥伴介紹<br>
-                    📍 **「地區」**：服務範圍<br>
-                    📅 **「預約」**：填寫表單<br><br>
-                    請問有什麼我可以幫忙的嗎？喵～
-                </div>
-            </div>
-            <div id="chat-input-area"><input type="text" id="chat-input" placeholder="打字後按 Enter..." onkeypress="if(event.keyCode==13) sendMessage()"></div>
-        </div>
-    </div>
-
-    <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
     <script>
         const nannies = [
@@ -213,9 +160,7 @@
             { name: "大王", year: "12年", quote: "突發狀況專家。" }
         ];
 
-        let currentRating = 0; // 記錄當前選中的星數
-
-        // 設置選中星星
+        let currentRating = 0;
         function setStars(num) {
             currentRating = num;
             const stars = document.querySelectorAll('#starInput span');
@@ -225,154 +170,86 @@
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'nanny') renderNannies();
-            if(id === 'admin') renderAdmin();
+            if(id === 'nanny') {
+                renderNannies();
+                loadFeedbacks();
+            }
             window.scrollTo(0,0);
         }
 
         function renderNannies() {
             const container = document.getElementById('nannyContainer');
-            container.innerHTML = '<p style="text-align:center; color:white;">雲端資料讀取中...</p>';
-
-            // 1. 🚀 先從 Python API 抓取雲端所有評價
             fetch('/api/get_feedbacks')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(cloudList => {
-                
-                // 2. 開始畫保母卡片
                 container.innerHTML = nannies.map(n => {
-                    // 過濾出屬於這位保母且有評分的雲端數據
                     const ratings = cloudList.filter(item => item.nanny === n.name && item.stars > 0);
-                    
-                    // 計算平均分
-                    const avg = ratings.length > 0 
-                        ? (ratings.reduce((sum, r) => sum + r.stars, 0) / ratings.length).toFixed(1) 
-                        : "新加入";
-                    
-                    // 畫出星號 (最多 5 顆)
-                    const starCount = ratings.length > 0 ? Math.min(5, Math.round(parseFloat(avg))) : 0;
-                    const starIcons = starCount > 0 ? "★".repeat(starCount) : "☆☆☆☆☆";
-
+                    const avg = ratings.length > 0 ? (ratings.reduce((sum, r) => sum + r.stars, 0) / ratings.length).toFixed(1) : "新加入";
                     return `
                     <div class="nanny-card">
                         <img src="/static/Photos of pet sitters/${n.name}.jpg" class="nanny-photo" onerror="this.src='https://via.placeholder.com/300x240?text=${n.name}'">
                         <h3>${n.name}</h3>
                         <p style="color:var(--primary); font-weight:bold;">年資 ${n.year}</p>
-                        <div class="nanny-rating-stars">${starIcons} (${avg})</div>
+                        <div class="nanny-rating-stars">${ratings.length > 0 ? "★".repeat(Math.round(avg)) : "☆☆☆☆☆"} (${avg})</div>
                         <p style="font-style:italic; font-size:0.8rem;">"${n.quote}"</p>
                     </div>`;
                 }).join('');
                 
-                // 3. 更新下拉選單 (保持原本邏輯)
                 const sel = document.getElementById('fbNanny');
-                if(sel && sel.options.length <= 1) {
-                    nannies.forEach(n => sel.add(new Option(n.name, n.name)));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                container.innerHTML = '<p style="color:red; text-align:center;">評價載入失敗</p>';
+                if(sel && sel.options.length <= 1) nannies.forEach(n => sel.add(new Option(n.name, n.name)));
             });
         }
 
-        function toggleChat() {
-            const win = document.getElementById('chat-window');
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const msgBox = document.getElementById('chat-messages');
-            const userText = input.value.trim();
-            if (!userText) return;
-            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-            input.value = '';
-            msgBox.scrollTop = msgBox.scrollHeight;
-            const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}">思考中...</div>`;
-            setTimeout(() => {
-                const loadingEl = document.getElementById(loadingId);
-                let reply = "";
-                if (userText.includes("多少錢") || userText.includes("價格")) reply = "喵～我們基本服務是 500 元起！你可以點選『費用試算』算看看喔汪！";
-                else if (userText.includes("地區")) reply = "目前在『台北、桃園、台中』都有服務喔！喵～";
-                else if (userText.includes("保母")) reply = "我們的保母都超有愛的！去『保母介紹』看更多資訊喵！";
-                else if (userText.includes("預約")) reply = "請點擊『預約服務』填表，我會請夥伴聯繫你喵！";
-                else reply = `喵～關於「${userText}」，我還在學習中。等明天串接 Gemini 後我就能聊更多了汪！`;
-                loadingEl.innerText = reply;
-                msgBox.scrollTop = msgBox.scrollHeight;
-            }, 800);
+        async function loadFeedbacks() {
+            const list = document.getElementById('feedbackList');
+            if (!list) return;
+            try {
+                const response = await fetch('/api/get_feedbacks');
+                const data = await response.json();
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; color: #777;">目前還沒有評價喔！</p>';
+                    return;
+                }
+                list.innerHTML = '';
+                data.forEach(fb => {
+                    const card = document.createElement('div');
+                    card.style = "background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);";
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color:var(--primary);">${fb.name || '匿名'}</strong>
+                            <span style="color:#f1c40f;">${'★'.repeat(fb.stars || 5)}</span>
+                        </div>
+                        <p style="margin:10px 0; color:#555;">${fb.content}</p>
+                        <small style="color:#999;">保母：${fb.nanny || '一般建議'}</small>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (e) {
+                list.innerHTML = '<p style="color: red; text-align: center;">評價載入失敗</p>';
+            }
         }
 
         function submitFeedback() {
-            const name = document.getElementById('fbName').value || "匿名";
-            const fbNanny = document.getElementById('fbNanny').value;
             const content = document.getElementById('fbContent').value;
-            
             if(!content) return alert('請填寫內容');
-
-            // 1. 準備要送到雲端的資料包
             const feedbackData = {
-                name: name,
-                nanny: fbNanny,
+                name: document.getElementById('fbName').value || "匿名",
+                nanny: document.getElementById('fbNanny').value,
                 content: content,
-                stars: currentRating // 這裡會抓取你目前的星數
+                stars: currentRating
             };
-
-            // 2. 🚀 發射到 Python 後端
             fetch('/api/submit_feedback', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(feedbackData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    alert('🎉 雲端存檔成功！資料已同步至 Firestore');
-                    document.getElementById('fbContent').value = ""; 
-                    setStars(0); 
-                    // 這裡可以選擇要不要跳轉，我們先留在原地觀察
-                    // showPage('admin'); 
-                } else {
-                    alert('糟糕！存檔失敗：' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('連線失敗！請確認你的 Python (main.py) 是否正在執行中。');
+            }).then(() => {
+                alert('評價送出成功！');
+                document.getElementById('fbContent').value = "";
+                setStars(0);
             });
         }
 
-        function renderAdmin() {
-            const listDiv = document.getElementById('adminList');
-            listDiv.innerHTML = '<div style="text-align:center; padding:50px; color:rgba(255,255,255,0.5);">同步中...</div>';
-
-            // 🚀 向 Python API 請求 Firestore 資料
-            fetch('/api/get_feedbacks')
-            .then(response => response.json())
-            .then(data => {
-                if (!data || data.length === 0) {
-                    listDiv.innerHTML = '<div class="card">暫無雲端回饋</div>';
-                    return;
-                }
-
-                // 將抓到的雲端資料畫在畫面上，保持你原本的卡片風格
-                listDiv.innerHTML = data.map(i => `
-                    <div class="card" style="color: black; margin-bottom: 10px; text-align: left;">
-                        <strong>${i.name || '匿名'}</strong> 評價了 <strong>${i.nanny || '未指定'}</strong> - ${i.time}<br>
-                        評分：${i.stars > 0 ? '<span style="color:#fbc02d;">' + "★".repeat(i.stars) + '</span>' : "純建議"}
-                        <p style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">${i.content}</p>
-                    </div>`).join('');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                listDiv.innerHTML = '<p style="color:#ffccbc; text-align:center;">讀取失敗，請檢查 Python 是否有啟動</p>';
-            });
-        }
-
-        function clearData() { if(confirm('確定清空？')) { localStorage.removeItem('pet_fb_v3'); renderAdmin(); } }
-        calc();
+        document.addEventListener('DOMContentLoaded', loadFeedbacks);
     </script>
 </body>
 </html>
