@@ -3,8 +3,6 @@ from flask import Flask, render_template, request, jsonify
 from google.cloud import firestore
 
 app = Flask(__name__)
-
-# 初始化 Firestore (Cloud Run 會自動抓取環境權限)
 db = firestore.Client()
 
 @app.route('/')
@@ -34,7 +32,7 @@ def submit_feedback():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# API: 獲取所有評價
+# API: 獲取評價
 @app.route('/api/get_reviews', methods=['GET'])
 def get_reviews():
     try:
