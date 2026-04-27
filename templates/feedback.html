@@ -2,65 +2,71 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>評價 {{ nanny_name }}</title>
     <style>
-        body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 50px 20px; }
-        .box { background: white; padding: 40px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .stars-container { margin: 20px 0; font-size: 35px; cursor: pointer; }
-        .star { color: #ddd; }
+        body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 40px 20px; }
+        .box { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .star-box { margin: 20px 0; font-size: 35px; cursor: pointer; }
+        .star { color: #ddd; transition: 0.2s; }
         .star.active { color: #f1c40f; }
-        textarea { width: 100%; height: 120px; margin-bottom: 20px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
-        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        textarea { width: 100%; height: 120px; margin: 20px 0; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>⭐ 評價：{{ nanny_name }}</h2>
-        <div class="stars-container" id="starRating">
-            <span class="star active" data-val="1">★</span>
-            <span class="star active" data-val="2">★</span>
-            <span class="star active" data-val="3">★</span>
-            <span class="star active" data-val="4">★</span>
-            <span class="star active" data-val="5">★</span>
+        <h2 style="color: #e67e22;">🐾 評價保母：{{ nanny_name }}</h2>
+        <div class="star-box" id="starContainer">
+            <span class="star active" data-v="1">★</span>
+            <span class="star active" data-v="2">★</span>
+            <span class="star active" data-v="3">★</span>
+            <span class="star active" data-v="4">★</span>
+            <span class="star active" data-v="5">★</span>
         </div>
-        <p id="starHint" style="color: #e67e22;">給予 5 星好評</p>
-        <textarea id="feedbackContent" placeholder="寫點什麼吧..."></textarea>
-        <button onclick="sendNow()">送出評價</button>
+        <p id="starHint" style="color: #e67e22; font-weight: bold;">給予 5 顆星好評</p>
+        <textarea id="content" placeholder="請分享您的服務體驗..."></textarea>
+        <button onclick="submitReview()">送出回饋</button>
     </div>
 
     <script>
-        let currentStars = 5;
+        let score = 5;
         const stars = document.querySelectorAll('.star');
-
+        
         stars.forEach(s => {
             s.onclick = function() {
-                currentStars = parseInt(this.getAttribute('data-val'));
+                score = parseInt(this.getAttribute('data-v'));
                 stars.forEach(el => {
-                    el.classList.toggle('active', parseInt(el.getAttribute('data-val')) <= currentStars);
+                    el.classList.toggle('active', parseInt(el.getAttribute('data-v')) <= score);
                 });
-                document.getElementById('starHint').innerText = `給予 ${currentStars} 星評分`;
+                document.getElementById('starHint').innerText = `給予 ${score} 顆星評分`;
             };
         });
 
-        async function sendNow() {
-            const txt = document.getElementById('feedbackContent').value.trim();
-            if(!txt) return alert('請輸入內容');
+        async function submitReview() {
+            const msg = document.getElementById('content').value.trim();
+            if(!msg) return alert('請輸入評價內容喔！');
 
             const payload = {
                 nanny: "{{ nanny_name }}",
-                stars: currentStars, // 這裡絕對會抓到變數！
-                content: txt
+                stars: score,
+                content: msg
             };
 
-            const res = await fetch('/api/submit_feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                alert('感謝評價！');
-                window.location.href = '/nanny';
+            try {
+                const res = await fetch('/api/submit_feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(res.ok) {
+                    alert('感謝您的回饋！');
+                    window.location.href = '/nanny';
+                } else {
+                    alert('傳送失敗，請稍後再試');
+                }
+            } catch (e) {
+                alert('連線錯誤');
             }
         }
     </script>
