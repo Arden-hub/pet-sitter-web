@@ -1,11 +1,10 @@
 import os
 from flask import Flask, render_template, request, jsonify
-# 1. 引入 GCP Firestore 零件
 from google.cloud import firestore
 
 app = Flask(__name__)
 
-# 2. 初始化 Firestore 客戶端
+# 初始化 Firestore 客戶端
 db = firestore.Client()
 
 # ==========================================
@@ -14,10 +13,6 @@ db = firestore.Client()
 
 @app.route('/')
 def index():
-    # 診斷：看看 Flask 目前認知的資料夾路徑在哪
-    import os
-    print(f"目前工作目錄: {os.getcwd()}")
-    print(f"Templates 目錄是否存在: {os.path.exists('templates')}")
     return render_template('index.html')
 
 @app.route('/fb')
@@ -32,20 +27,19 @@ def ig_page():
 # API 介面 (Backend APIs)
 # ==========================================
 
-# 【寫入功能】接收網頁傳來的評價
 @app.route('/api/submit_feedback', methods=['POST'])
 def submit_feedback():
     try:
         data = request.json
-        print(f"收到新評價: {data}")
+        if not data:
+            return jsonify({"status": "error", "message": "無效的數據"}), 400
 
-        # 存入 Firestore 的 pet_reviews 集合
         doc_ref = db.collection('pet_reviews').document()
         doc_ref.set({
             'name': data.get('name', '匿名'),
             'nanny': data.get('nanny'),
-            'content': data.get('content'),
-            'stars': data.get('stars'),
+            'content': data.get('content', ''),
+            'stars': int(data.get('stars', 0)),
             'timestamp': firestore.SERVER_TIMESTAMP
         })
         return jsonify({"status": "success", "message": "雲端存檔成功！"}), 200
@@ -53,40 +47,36 @@ def submit_feedback():
         print(f"寫入錯誤: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# 【讀取功能】從雲端抓取所有評價
 @app.route('/api/get_feedbacks', methods=['GET'])
 def get_feedbacks():
     try:
-        # 依照時間排序（最新的在上面）
+        # 注意：若 Firestore 尚未建立 timestamp 索引，此處會報錯。
+        # 如果報錯導致抓不到資料，請先移除 .order_by 部分測試
         reviews_ref = db.collection('pet_reviews').order_by('timestamp', direction=firestore.Query.DESCENDING)
         docs = reviews_ref.stream()
         
         results = []
         for doc in docs:
             item = doc.to_dict()
-            # 轉換 Firestore 的時間物件變成網頁看得懂的字串
-            if 'timestamp' in item and item['timestamp']:
+            if 'timestamp' in item and item['timestamp'] and hasattr(item['timestamp'], 'strftime'):
                 item['time'] = item['timestamp'].strftime("%Y-%m-%d %H:%M:%S")
             else:
                 item['time'] = "未知時間"
+            
+            item['stars'] = int(item.get('stars', 0))
+            item['id'] = doc.id
             results.append(item)
             
         return jsonify(results), 200
     except Exception as e:
         print(f"讀取錯誤: {e}")
-        return jsonify({"error": str(e)}), 500
+        # 返回空陣列確保前端 renderNannies 不會崩潰
+        return jsonify([]), 200
 
 # ==========================================
-# 啟動伺服器 (必須放在最下方)
+# 啟動伺服器 (Cloud Run / Local 兼容)
 # ==========================================
 
-
-
-
-if __name__ == "__main__":
-    # 這是關鍵：Cloud Run 會透過環境變數 PORT 告訴程式要聽哪裡
-    # 如果是在本機跑，沒設定 PORT 時會預設使用 8080
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
-    
-    # host 必須設定為 '0.0.0.0'，否則容器外連不進來
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
