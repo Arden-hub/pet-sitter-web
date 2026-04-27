@@ -2,111 +2,45 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>意見回饋</title>
+    <title>評價 {{ nanny_name }}</title>
     <style>
-        body { 
-            font-family: "Microsoft JhengHei", sans-serif; 
-            background: #fff9f0; 
-            text-align: center; 
-            padding: 50px 20px; 
-            margin: 0;
-        }
-        .box { 
-            background: white; 
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            max-width: 450px; 
-            margin: 0 auto; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        }
-        h2 { color: #e67e22; margin-top: 0; }
-        p { color: #7f8c8d; font-size: 0.95rem; margin-bottom: 25px; }
-        
-        textarea { 
-            width: 100%; 
-            height: 180px;
-            margin-bottom: 20px; 
-            padding: 15px; 
-            border-radius: 12px; 
-            border: 1px solid #ddd; 
-            box-sizing: border-box;
-            font-size: 1rem;
-            line-height: 1.5;
-            resize: none;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        textarea:focus { border-color: #e67e22; }
-
-        button { 
-            width: 100%; 
-            background: #e67e22; 
-            color: white; 
-            border: none; 
-            padding: 15px;
-            border-radius: 12px; 
-            font-size: 1.1rem;
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: background 0.3s, transform 0.1s;
-        }
-        button:hover { background: #d35400; }
-        button:active { transform: scale(0.98); }
+        body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 50px 20px; }
+        .box { background: white; padding: 40px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { color: #e67e22; }
+        textarea { width: 100%; height: 150px; margin: 20px 0; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-
     <div class="box">
-        <h2>🐾 意見回饋</h2>
-        <p>您的建議是我們前進的動力，請寫下您的想法：</p>
+        <h2>🐾 {% if nanny_name == "一般性建議" %}意見回饋{% else %}評價保母：{{ nanny_name }}{% endif %}</h2>
+        <p>請寫下您對 {{ nanny_name }} 的想法：</p>
         
-        <textarea id="feedbackContent" placeholder="請輸入您的建議..."></textarea>
-        
+        <textarea id="feedbackContent" placeholder="請輸入內容..."></textarea>
         <button onclick="sendFeedback()">送出回饋</button>
     </div>
 
     <script>
         async function sendFeedback() {
             const content = document.getElementById('feedbackContent').value.trim();
-            
-            if (!content) {
-                alert('請輸入建議內容再送出喔！');
-                return;
-            }
+            if (!content) return alert('請輸入內容');
 
-            // 準備傳送到 Firestore 的資料格式
             const payload = {
-                nanny: "一般性建議", // 保持欄位一致，但固定值
-                stars: 5,           // 預設給予滿分
-                content: content,
-                timestamp: new Date().toISOString()
+                nanny: "{{ nanny_name }}", // 直接把 Flask 傳過來的名字塞進去
+                content: content
             };
 
-            try {
-                // 呼叫你的 API 接口
-                const response = await fetch('/api/submit_feedback', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
+            const response = await fetch('/api/submit_feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-                if (response.ok) {
-                    alert('感謝您的回饋！');
-                    // 送出成功後導回指定頁面
-                    window.location.href = '/nanny';
-                } else {
-                    const errorMsg = await response.text();
-                    alert('送出失敗：' + errorMsg);
-                }
-            } catch (error) {
-                console.error('Submission Error:', error);
-                alert('連線發生錯誤，請稍後再試。');
+            if (response.ok) {
+                alert('感謝回饋！');
+                window.location.href = '/nanny';
             }
         }
     </script>
-
 </body>
 </html>
