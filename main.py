@@ -84,8 +84,9 @@ def get_feedbacks():
 
 
 if __name__ == "__main__":
-    # 設定 Port 8081
+    # 這是關鍵：Cloud Run 會透過環境變數 PORT 告訴程式要聽哪裡
+    # 如果是在本機跑，沒設定 PORT 時會預設使用 8080
     port = int(os.environ.get("PORT", 8080))
-    print(f"🚀 鏟屎官伺服器啟動在 http://127.0.0.1:{port}")
-    # debug=True 會在你改代碼時自動重啟，開發很方便
-    app.run(host="0.0.0.0", port=port, debug=True)
+    
+    # host 必須設定為 '0.0.0.0'，否則容器外連不進來
+    app.run(debug=False, host='0.0.0.0', port=port)
