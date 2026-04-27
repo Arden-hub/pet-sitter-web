@@ -28,7 +28,6 @@
         .name { font-size: 1.5rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
         .shout { background: #fffcf5; border: 1px solid #ffe8cc; padding: 10px; border-radius: 10px; font-style: italic; min-height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; font-size: 0.9rem; }
         
-        /* 評價顯示區 */
         .review-display { text-align: left; font-size: 0.85rem; border-top: 1px dashed #ffd8a8; padding-top: 10px; margin-bottom: 15px; flex-grow: 1; }
         .review-item { margin-bottom: 5px; color: #5d4037; }
         .stars { color: #f1c40f; margin-right: 5px; }
@@ -46,7 +45,6 @@
             margin-top: auto;
         }
         .review-btn:hover { background: #d35400; }
-
         .footer { height: 8px; background: #e67e22; }
     </style>
 </head>
@@ -54,7 +52,6 @@
     <h1 style="text-align:center; color:#e67e22; font-size: 2.5rem; margin-bottom: 40px;">🏆 精英保母戰隊</h1>
     
     <div class="grid">
-        {# 設定保母清單資料 #}
         {% set sitters = [
             ('Mio', '「給您的毛孩最溫暖的陪伴！」'),
             ('Nana', '「豐富的寵物照護經驗，交給我就是最安心的選擇！」'),
@@ -68,7 +65,6 @@
             ('Kevin', '「紀律與關愛並行，讓毛孩在規範中快樂成長。」')
         ] %}
 
-        {# 使用迴圈自動產生卡片 #}
         {% for name, slogan in sitters %}
         <div class="card">
             <div class="img-box">
@@ -79,8 +75,9 @@
                 <div class="shout">{{ slogan }}</div>
                 
                 <div class="review-display">
+                    {# 這裡修正了讀取 reviews 的方式，加上 .get() 更安全 #}
                     {% if reviews and reviews.get(name) %}
-                        {% for r in reviews.get(name)[:2] %} {# 顯示最新的兩則 #}
+                        {% for r in reviews.get(name)[:2] %}
                             <div class="review-item">
                                 <span class="stars">{{ "⭐" * r.stars }}</span> {{ r.content }}
                             </div>
@@ -90,7 +87,7 @@
                     {% endif %}
                 </div>
 
-                <a href="/feedback?nanny={{ name }}" class="review-btn">⭐ 我要評價</a>
+                <a href="/feedback/{{ name }}" class="review-btn">⭐ 我要評價</a>
             </div>
             <div class="footer"></div>
         </div>
