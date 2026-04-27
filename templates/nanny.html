@@ -2,33 +2,51 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>保母團隊 - 完整路徑版</title>
+    <title>保母團隊 - 專業服務版</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; margin: 0; padding: 40px 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; border-radius: 20px; border: 2px solid #e67e22; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .card { background: white; border-radius: 20px; border: 2px solid #e67e22; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; min-height: 520px; }
         .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(230, 126, 34, 0.2); }
         
-        /* 照片容器：保持比例，背景灰色墊底 */
         .img-box { 
             width: 100%; 
-            height: 300px; 
+            height: 250px; 
             background: #f0f0f0; 
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        /* 關鍵：使用 contain 確保照片不切邊 */
         .img-box img { 
             max-width: 100%; 
             max-height: 100%; 
             object-fit: contain; 
         }
         
-        .info { padding: 20px; text-align: center; }
+        .info { padding: 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
         .name { font-size: 1.5rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
-        .shout { background: #fffcf5; border: 1px solid #ffe8cc; padding: 15px; border-radius: 10px; font-style: italic; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+        .shout { background: #fffcf5; border: 1px solid #ffe8cc; padding: 10px; border-radius: 10px; font-style: italic; min-height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; font-size: 0.9rem; }
+        
+        /* 評價顯示區 */
+        .review-display { text-align: left; font-size: 0.85rem; border-top: 1px dashed #ffd8a8; padding-top: 10px; margin-bottom: 15px; flex-grow: 1; }
+        .review-item { margin-bottom: 5px; color: #5d4037; }
+        .stars { color: #f1c40f; margin-right: 5px; }
+
+        .review-btn {
+            display: inline-block;
+            background: #e67e22;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            margin-top: auto;
+        }
+        .review-btn:hover { background: #d35400; }
+
         .footer { height: 8px; background: #e67e22; }
     </style>
 </head>
@@ -36,96 +54,47 @@
     <h1 style="text-align:center; color:#e67e22; font-size: 2.5rem; margin-bottom: 40px;">🏆 精英保母戰隊</h1>
     
     <div class="grid">
+        {# 設定保母清單資料 #}
+        {% set sitters = [
+            ('Mio', '「給您的毛孩最溫暖的陪伴！」'),
+            ('Nana', '「豐富的寵物照護經驗，交給我就是最安心的選擇！」'),
+            ('Yuki', '「專業與耐心的結合，處理毛孩大小事游刃有餘。」'),
+            ('大王', '「您的信任是我最大的動力，守護毛孩，全力以赴！」'),
+            ('小花', '「細心觀察，讓您的貓主子享有賓至如歸的尊榮。」'),
+            ('阿明', '「運動型保母出動！狗狗放電的最佳夥伴就是我。」'),
+            ('阿強', '「把每隻狗狗都當成自己的家人照顧，絕不馬虎。」'),
+            ('莉莉', '「溫柔呵護每一顆心，給害羞毛孩最滿的安全感。」'),
+            ('Bella', '「用滿滿的愛心，填補您不在毛孩身邊的空白。」'),
+            ('Kevin', '「紀律與關愛並行，讓毛孩在規範中快樂成長。」')
+        ] %}
+
+        {# 使用迴圈自動產生卡片 #}
+        {% for name, slogan in sitters %}
         <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/Mio.jpg"></div>
+            <div class="img-box">
+                <img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/{{ name }}.jpg">
+            </div>
             <div class="info">
-                <div class="name">Mio</div>
-                <div class="shout">「給您的毛孩最溫暖的陪伴！」</div>
+                <div class="name">{{ name }}</div>
+                <div class="shout">{{ slogan }}</div>
+                
+                <div class="review-display">
+                    {% if reviews and reviews.get(name) %}
+                        {% for r in reviews.get(name)[:2] %} {# 顯示最新的兩則 #}
+                            <div class="review-item">
+                                <span class="stars">{{ "⭐" * r.stars }}</span> {{ r.content }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="color: #bdc3c7; text-align: center;">尚無評價</div>
+                    {% endif %}
+                </div>
+
+                <a href="/review_page?nanny={{ name }}" class="review-btn">⭐ 我要評價</a>
             </div>
             <div class="footer"></div>
         </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/Nana.jpg"></div>
-            <div class="info">
-                <div class="name">Nana</div>
-                <div class="shout">「豐富的寵物照護經驗，交給我就是最安心的選擇！」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/Yuki.jpg"></div>
-            <div class="info">
-                <div class="name">Yuki</div>
-                <div class="shout">「專業與耐心的結合，處理毛孩大小事游刃有餘。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/大王.jpg"></div>
-            <div class="info">
-                <div class="name">大王</div>
-                <div class="shout">「您的信任是我最大的動力，守護毛孩，全力以赴！」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/小花.jpg"></div>
-            <div class="info">
-                <div class="name">小花</div>
-                <div class="shout">「細心觀察，讓您的貓主子享有賓至如歸的尊榮。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/阿明.jpg"></div>
-            <div class="info">
-                <div class="name">阿明</div>
-                <div class="shout">「運動型保母出動！狗狗放電的最佳夥伴就是我。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/阿強.jpg"></div>
-            <div class="info">
-                <div class="name">阿強</div>
-                <div class="shout">「把每隻狗狗都當成自己的家人照顧，絕不馬虎。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/莉莉.jpg"></div>
-            <div class="info">
-                <div class="name">莉莉</div>
-                <div class="shout">「溫柔呵護每一顆心，給害羞毛孩最滿的安全感。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/Bella.jpg"></div>
-            <div class="info">
-                <div class="name">Bella</div>
-                <div class="shout">「用滿滿的愛心，填補您不在毛孩身邊的空白。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
-        <div class="card">
-            <div class="img-box"><img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/Kevin.jpg"></div>
-            <div class="info">
-                <div class="name">Kevin</div>
-                <div class="shout">「紀律與關愛並行，讓毛孩在規範中快樂成長。」</div>
-            </div>
-            <div class="footer"></div>
-        </div>
-
+        {% endfor %}
     </div>
 </body>
 </html>
