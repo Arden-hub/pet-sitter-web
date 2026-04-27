@@ -2,22 +2,205 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>鏟屎官到你家 - 首頁</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { text-align: center; background: white; padding: 50px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        h1 { color: #e67e22; font-size: 2.5rem; }
-        .btn { display: inline-block; padding: 15px 30px; margin: 10px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        .btn-1 { background: #e67e22; color: white; }
-        .btn-2 { border: 2px solid #e67e22; color: #e67e22; }
+        :root { 
+            --primary: #e67e22; 
+            --bg-warm: #fff9f0; 
+            --card-bg: #ffffff; 
+            --text-dark: #5d4037; 
+            --accent: #fbe7c6; 
+        }
+
+        body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; background-color: var(--bg-warm); color: var(--text-dark); line-height: 1.6; }
+        
+        nav { background: var(--card-bg); padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .logo-container { display: flex; align-items: center; text-decoration: none; }
+        .logo-img-wrapper { height: 50px; width: 50px; background: #fff; border-radius: 50%; margin-right: 12px; border: 2px solid var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .logo-img { height: 80%; width: 80%; object-fit: contain; }
+        .logo-text { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
+
+        nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
+        nav ul li { margin-left: 15px; }
+        nav ul li a { text-decoration: none; color: var(--text-dark); font-weight: bold; font-size: 0.95rem; transition: 0.3s; }
+        nav ul li a:hover { color: var(--primary); }
+
+        .page { padding: 30px 15px; max-width: 1000px; margin: 0 auto; }
+
+        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
+        .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
+        
+        .shop-section { display: flex; align-items: stretch; background: white; border-radius: 20px; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        .shop-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; }
+        .shop-section img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .product-item { background: white; border-radius: 20px; text-align: center; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .product-img-wrapper { width: 100%; height: 250px; }
+        .product-item img { width: 100%; height: 100%; object-fit: cover; }
+        .product-text { padding: 20px; }
+
+        .social-practice { margin-top: 40px; padding: 30px; text-align: center; background: rgba(230, 126, 34, 0.08); border-radius: 20px; border: 2px dashed var(--accent); }
+
+        /* --- Kiki AI 客服樣式 --- */
+        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+        #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
+        #chat-button:hover { transform: scale(1.1); }
+        #chat-window { display: none; width: 320px; height: 450px; background: white; position: absolute; bottom: 80px; right: 0; border-radius: 20px; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #eee; }
+        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg-warm); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; }
+        .msg-ai { background: white; align-self: flex-start; border: 1px solid #eee; color: var(--text-dark); }
+        .msg-user { background: var(--accent); align-self: flex-end; color: var(--text-dark); }
+        #chat-input-area { padding: 10px; display: flex; border-top: 1px solid #eee; background: #fff; }
+        #chat-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 0.9rem; }
+        .typing-dots { color: #888; font-size: 0.8rem; }
+
+        footer { text-align: center; padding: 40px; color: #bcaaa4; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🐾 鏟屎官到你家</h1>
-        <p>專業保母，愛心照顧</p>
-        <a href="/nanny" class="btn btn-1">查看保母團隊</a>
-        <a href="/feedback" class="btn btn-2">我要意見回饋</a>
+
+    <nav>
+        <a href="index.html" class="logo-container">
+            <div class="logo-img-wrapper"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/kiki.png" class="logo-img"></div>
+            <span class="logo-text">鏟屎官到你家</span>
+        </a>
+        <ul>
+            <li><a href="index.html">首頁</a></li>
+            <li><a href="nanny.html">保母介紹</a></li>
+            <li><a href="https://asia-east1-project-8212b9e4-be2a-47e7-aa0.cloudfunctions.net/calculator_service" target="_blank">費用試算</a></li>
+            <li><a href="http://goo.gl/QJfH3R" target="_blank">預約服務</a></li>
+            <li><a href="feedback.html">意見回饋</a></li>
+        </ul>
+    </nav>
+
+    <div class="page">
+        <section class="home-hero">
+            <h2>寵物到府餵養服務！</h2>
+            <p style="font-weight: bold;">餵食，鏟屎，放飯，遛狗</p>
+        </section>
+
+        <div class="slogan">" 最適合毛孩的照顧方式 "</div>
+
+        <section class="shop-section">
+            <div class="shop-img-wrapper"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/index-1.jpg"></div>
+            <div class="shop-info">
+                <h2>📍 服務地區</h2>
+                <p>大台北、桃園、台中地區<br>全心全意，為您服務～</p>
+            </div>
+        </section>
+
+        <section class="product-grid">
+            <div class="product-item">
+                <div class="product-img-wrapper"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/cat-baby-1.png"></div>
+                <div class="product-text"><h3>有愛</h3><p>讓毛小孩感受溫度</p></div>
+            </div>
+            <div class="product-item">
+                <div class="product-img-wrapper"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/cat-baby-2.png"></div>
+                <div class="product-text"><h3>負責</h3><p>使命必達的照顧</p></div>
+            </div>
+            <div class="product-item">
+                <div class="product-img-wrapper"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/cat-baby-3.png"></div>
+                <div class="product-text"><h3>專業</h3><p>標準化回報流程</p></div>
+            </div>
+        </section>
+
+        <section class="social-practice">
+            <p style="font-weight: bold;">🔗 連結更多“鏟屎官到你家”相關社群～看更多可愛貓咪～</p>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top:10px;">
+                <a href="ig.html" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
+                <a href="fb.html" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 評價</a>
+            </div>
+        </section>
     </div>
+
+    <div id="chat-widget">
+        <div id="chat-button" onclick="toggleChat()">
+            <img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;">
+        </div>
+        <div id="chat-window">
+            <div id="chat-header">
+                <span>Kiki 溫馨客服</span>
+                <span onclick="toggleChat()" style="cursor:pointer; font-size: 1.2rem;">✕</span>
+            </div>
+            <div id="chat-messages">
+                <div class="msg msg-ai">
+                    喵嗚～歡迎來到鏟屎官到你家！🐾<br>
+                    我是最愛毛孩的 AI 助教 <strong>Kiki</strong>。❤️<br><br>
+                    爸爸媽媽出門遠行時，別擔心，Kiki 和夥伴們會像家人一樣守護著寶貝！✨<br><br>
+                    想多了解我們嗎？輸入關鍵字讓 Kiki 為你解答：<br>
+                    💰 <strong>「多少錢」</strong>：服務收費與細節<br>
+                    🐱 <strong>「保母」</strong>：認識專業的夥伴<br>
+                    📍 <strong>「地區」</strong>：看我們去哪裡服務<br>
+                    📅 <strong>「預約」</strong>：開啟溫馨照顧之旅
+                </div>
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="想問什麼呢？按 Enter 送出..." onkeypress="if(event.keyCode==13) sendMessage()">
+            </div>
+        </div>
+    </div>
+
+    <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
+
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+            if (win.style.display === 'flex') {
+                const msgBox = document.getElementById('chat-messages');
+                msgBox.scrollTop = msgBox.scrollHeight;
+                document.getElementById('chat-input').focus();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msgBox = document.getElementById('chat-messages');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+            input.value = '';
+            msgBox.scrollTop = msgBox.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在思考中...喵...</span></div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+
+            setTimeout(() => {
+                const loadingEl = document.getElementById(loadingId);
+                loadingEl.innerHTML = getKikiResponse(userText);
+                msgBox.scrollTop = msgBox.scrollHeight;
+            }, 800);
+        }
+
+        function getKikiResponse(text) {
+            const t = text.toLowerCase();
+            
+            if (t.includes("多少錢") || t.includes("費用") || t.includes("價格")) {
+                return "喵～ Kiki 知道爸媽都很注重CP值！我們的到府服務 <strong>500 元起</strong>。🐾<br>您可以點選上面的『費用試算』，根據寶貝的需求算算最精確的預算喔！汪！";
+            }
+            if (t.includes("地區") || t.includes("哪裡")) {
+                return "不論在『<strong>台北、桃園、台中</strong>』，只要有毛孩的地方，我們就盡量趕過去！喵嗚～<br>如果您不確定家裡是否在範圍內，可以先跟 Kiki 說您的區域喔！";
+            }
+            if (t.includes("保母") || t.includes("夥伴")) {
+                return "我們的保母夥伴都是超級貓奴狗僕！❤️<br>像是 <strong>Mio</strong>、<strong>阿強</strong> 他們都有好多年的照顧經驗。您可以去『保母介紹』看看他們的個人檔案與好評喔！";
+            }
+            if (t.includes("預約")) {
+                return "準備好要把寶貝交給我們了嗎？Kiki 好期待喔！✨<br>請點擊『<strong>預約服務</strong>』按鈕開啟表單，填完後，Kiki 的爸爸會用最快的速度跟您聯繫喵！";
+            }
+            if (t.includes("你好") || t.includes("哈囉") || t.includes("hello")) {
+                return "喵嗚～您好呀！看到您真開心，今天有什麼 Kiki 可以幫上忙的地方嗎？🐾";
+            }
+            return `喵嗚～關於「${text}」，Kiki 還在努力學習中。🐾<br>不過您可以先試試詢問<strong>價格、保母介紹、或是預約方式</strong>喔！`;
+        }
+    </script>
+
 </body>
 </html>

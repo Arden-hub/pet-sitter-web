@@ -2,42 +2,130 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>保母團隊</title>
+    <title>保母團隊 - 完整路徑版</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; overflow: hidden; text-align: center; padding-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .img-box { width: 100%; aspect-ratio: 4/5; background: #eee; }
-        .img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .name { font-weight: bold; color: #e67e22; font-size: 1.2rem; margin: 10px 0; }
-        .stars { color: #f1c40f; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; margin: 0; padding: 40px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; border-radius: 20px; border: 2px solid #e67e22; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(230, 126, 34, 0.2); }
+        
+        /* 照片容器：保持比例，背景灰色墊底 */
+        .img-box { 
+            width: 100%; 
+            height: 300px; 
+            background: #f0f0f0; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 關鍵：使用 contain 確保照片不切邊 */
+        .img-box img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+        }
+        
+        .info { padding: 20px; text-align: center; }
+        .name { font-size: 1.5rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
+        .shout { background: #fffcf5; border: 1px solid #ffe8cc; padding: 15px; border-radius: 10px; font-style: italic; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+        .footer { height: 8px; background: #e67e22; }
     </style>
 </head>
 <body>
-    <h1 style="text-align:center; color:#e67e22;">🐾 我們的保母團隊</h1>
-    <div id="list" class="grid"></div>
-    <script>
-        const nannies = ["Mio","阿強","小花","Yuki","阿明","Bella","Kevin","莉莉","Nana","大王"];
-        async function load() {
-            const list = document.getElementById('list');
-            list.innerHTML = nannies.map(n => `
-                <div class="card">
-                    <div class="img-box"><img src="/static/Photos of pet sitters/${n}.jpg" onerror="this.src='https://via.placeholder.com/200x250'"></div>
-                    <div class="name">${n}</div>
-                    <div class="stars" id="s-${n}">★ 載入中</div>
-                </div>`).join('');
-            const res = await fetch('/api/get_reviews');
-            const data = await res.json();
-            nannies.forEach(n => {
-                const rs = data.filter(r => r.nanny === n);
-                const el = document.getElementById(`s-${n}`);
-                if(rs.length) {
-                    const avg = (rs.reduce((a,b)=>a+b.stars,0)/rs.length).toFixed(1);
-                    el.innerHTML = '★ '.repeat(Math.round(avg)) + avg;
-                } else { el.innerHTML = '★ 新加入'; }
-            });
-        }
-        load();
-    </script>
+    <h1 style="text-align:center; color:#e67e22; font-size: 2.5rem; margin-bottom: 40px;">🏆 精英保母戰隊</h1>
+    
+    <div class="grid">
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/Mio.jpg"></div>
+            <div class="info">
+                <div class="name">Mio</div>
+                <div class="shout">「給您的毛孩最溫暖的陪伴！」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/Nana.jpg"></div>
+            <div class="info">
+                <div class="name">Nana</div>
+                <div class="shout">「豐富的寵物照護經驗，交給我就是最安心的選擇！」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/Yuki.jpg"></div>
+            <div class="info">
+                <div class="name">Yuki</div>
+                <div class="shout">「專業與耐心的結合，處理毛孩大小事游刃有餘。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/大王.jpg"></div>
+            <div class="info">
+                <div class="name">大王</div>
+                <div class="shout">「您的信任是我最大的動力，守護毛孩，全力以赴！」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/小花.jpg"></div>
+            <div class="info">
+                <div class="name">小花</div>
+                <div class="shout">「細心觀察，讓您的貓主子享有賓至如歸的尊榮。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/阿明.jpg"></div>
+            <div class="info">
+                <div class="name">阿明</div>
+                <div class="shout">「運動型保母出動！狗狗放電的最佳夥伴就是我。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/阿強.jpg"></div>
+            <div class="info">
+                <div class="name">阿強</div>
+                <div class="shout">「把每隻狗狗都當成自己的家人照顧，絕不馬虎。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/莉莉.jpg"></div>
+            <div class="info">
+                <div class="name">莉莉</div>
+                <div class="shout">「溫柔呵護每一顆心，給害羞毛孩最滿的安全感。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/Bella.jpg"></div>
+            <div class="info">
+                <div class="name">Bella</div>
+                <div class="shout">「用滿滿的愛心，填補您不在毛孩身邊的空白。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+        <div class="card">
+            <div class="img-box"><img src="/Users/huangyaote/Downloads/GCP/鏟屎官測試網頁/static/Photos of pet sitters/Kevin.jpg"></div>
+            <div class="info">
+                <div class="name">Kevin</div>
+                <div class="shout">「紀律與關愛並行，讓毛孩在規範中快樂成長。」</div>
+            </div>
+            <div class="footer"></div>
+        </div>
+
+    </div>
 </body>
 </html>
