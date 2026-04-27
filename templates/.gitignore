@@ -1,0 +1,11 @@
+# Python 環境
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# GCP 金鑰 (如果你有下載 JSON 金鑰的話)
+*.json
+
+# Mac 系統檔案
+.DS_Store

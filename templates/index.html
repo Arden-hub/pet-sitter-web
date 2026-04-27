@@ -30,7 +30,7 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('/static/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
         .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
         
@@ -83,7 +83,7 @@
 
     <nav>
         <div class="logo-container" onclick="showPage('home')">
-            <div class="logo-img-wrapper"><img src="index_images/kiki.png" class="logo-img" onerror="this.src='https://via.placeholder.com/50?text=K'"></div>
+            <div class="logo-img-wrapper"><img src="/static/index_images/kiki.png" class="logo-img" onerror="this.src='https://via.placeholder.com/50?text=K'"></div>
             <span class="logo-text">鏟屎官到你家</span>
         </div>
         <ul>
@@ -92,7 +92,6 @@
             <li><a onclick="showPage('price')">費用試算</a></li>
             <li><a onclick="showPage('booking')">預約服務</a></li>
             <li><a onclick="showPage('feedback')">意見回饋</a></li>
-            <li><a onclick="showPage('admin')" style="color:#d7ccc8">[管理]</a></li>
         </ul>
     </nav>
 
@@ -100,28 +99,28 @@
         <div class="home-hero"><h2>寵物到府餵養服務！</h2><p style="font-weight: bold;">餵食，鏟屎，放飯，遛狗</p></div>
         <div class="slogan">" 最適合毛孩的照顧方式 "</div>
         <div class="shop-section">
-            <div class="shop-img-wrapper"><img src="index_images/index-1.jpg"></div>
+            <div class="shop-img-wrapper"><img src="/static/index_images/index-1.jpg"></div>
             <div class="shop-info"><h2>📍 服務地區</h2><p>大台北、桃園、台中地區<br>全心全意，為您服務～</p></div>
         </div>
         <div class="product-grid">
             <div class="product-item">
-                <div class="product-img-wrapper"><img src="index_images/cat-baby-1.png"></div>
+                <div class="product-img-wrapper"><img src="/static/index_images/cat-baby-1.png"></div>
                 <div class="product-text"><h3>有愛</h3><p>讓毛小孩感受溫度</p></div>
             </div>
             <div class="product-item">
-                <div class="product-img-wrapper"><img src="index_images/cat-baby-2.png"></div>
+                <div class="product-img-wrapper"><img src="/static/index_images/cat-baby-2.png"></div>
                 <div class="product-text"><h3>負責</h3><p>使命必達的照顧</p></div>
             </div>
             <div class="product-item">
-                <div class="product-img-wrapper"><img src="index_images/cat-baby-3.png"></div>
+                <div class="product-img-wrapper"><img src="/static/index_images/cat-baby-3.png"></div>
                 <div class="product-text"><h3>專業</h3><p>標準化回報流程</p></div>
             </div>
         </div>
         <div class="social-practice">
             <p style="font-weight: bold;">🔗 連結更多“鏟屎官到你家”相關社群～看更多可愛貓咪～</p>
             <div style="display: flex; justify-content: center; gap: 10px; margin-top:10px;">
-                <a href="ig.html" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
-                <a href="fb.html" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 頁面</a>
+                <a href="ig" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
+                <a href="fb" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 頁面</a>
             </div>
         </div>
     </section>
@@ -171,10 +170,18 @@
         </div>
     </section>
 
-    <section id="admin" class="page"><h2>🔹 評價管理</h2><div id="adminList"></div><button class="btn" onclick="clearData()" style="background:#95a5a6; margin-top:20px;">清空數據</button></section>
+    <section id="admin" class="page"><h2>🔹 評價管理</h2><div id="admin" class="page" style="display:none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; color: #d7ccc8;">評價管理系統</h2>
+        <button onclick="showPage('feedback')" style="font-size: 0.8rem; padding: 5px 10px;">返回</button>
+    </div>
+    
+    <div id="adminList">
+        </div>
+</div><button class="btn" onclick="clearData()" style="background:#95a5a6; margin-top:20px;">清空數據</button></section>
 
     <div id="chat-widget">
-        <div id="chat-button" onclick="toggleChat()"><img src="index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;"></div>
+        <div id="chat-button" onclick="toggleChat()"><img src="/static/index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;"></div>
         <div id="chat-window">
             <div id="chat-header"><span>Kiki 溫馨客服</span><span onclick="toggleChat()" style="cursor:pointer;">✕</span></div>
             <div id="chat-messages">
@@ -226,27 +233,48 @@
         }
 
         function renderNannies() {
-            const list = JSON.parse(localStorage.getItem('pet_fb_v3')) || [];
-            document.getElementById('nannyContainer').innerHTML = nannies.map(n => {
-                // 過濾該保母且有評分的數據
-                const ratings = list.filter(item => item.fbNanny === n.name && item.stars > 0);
-                const avg = ratings.length > 0 ? (ratings.reduce((sum, r) => sum + r.stars, 0) / ratings.length).toFixed(1) : "新加入";
-                
-                // 修正：星號最多只畫 5 顆，不會爆走
-                const starCount = ratings.length > 0 ? Math.min(5, Math.round(avg)) : 0;
-                const starIcons = starCount > 0 ? "★".repeat(starCount) : "☆☆☆☆☆";
+            const container = document.getElementById('nannyContainer');
+            container.innerHTML = '<p style="text-align:center; color:white;">雲端資料讀取中...</p>';
 
-                return `
-                <div class="nanny-card">
-                    <img src="Photos of pet sitters/${n.name}.jpg" class="nanny-photo" onerror="this.src='https://via.placeholder.com/300x240?text=${n.name}'">
-                    <h3>${n.name}</h3><p style="color:var(--primary); font-weight:bold;">年資 ${n.year}</p>
-                    <div class="nanny-rating-stars">${starIcons} (${avg})</div>
-                    <p style="font-style:italic; font-size:0.8rem;">"${n.quote}"</p>
-                </div>`;
-            }).join('');
-            
-            const sel = document.getElementById('fbNanny');
-            if(sel.options.length <= 1) nannies.forEach(n => sel.add(new Option(n.name, n.name)));
+            // 1. 🚀 先從 Python API 抓取雲端所有評價
+            fetch('/api/get_feedbacks')
+            .then(response => response.json())
+            .then(cloudList => {
+                
+                // 2. 開始畫保母卡片
+                container.innerHTML = nannies.map(n => {
+                    // 過濾出屬於這位保母且有評分的雲端數據
+                    const ratings = cloudList.filter(item => item.nanny === n.name && item.stars > 0);
+                    
+                    // 計算平均分
+                    const avg = ratings.length > 0 
+                        ? (ratings.reduce((sum, r) => sum + r.stars, 0) / ratings.length).toFixed(1) 
+                        : "新加入";
+                    
+                    // 畫出星號 (最多 5 顆)
+                    const starCount = ratings.length > 0 ? Math.min(5, Math.round(parseFloat(avg))) : 0;
+                    const starIcons = starCount > 0 ? "★".repeat(starCount) : "☆☆☆☆☆";
+
+                    return `
+                    <div class="nanny-card">
+                        <img src="/static/Photos of pet sitters/${n.name}.jpg" class="nanny-photo" onerror="this.src='https://via.placeholder.com/300x240?text=${n.name}'">
+                        <h3>${n.name}</h3>
+                        <p style="color:var(--primary); font-weight:bold;">年資 ${n.year}</p>
+                        <div class="nanny-rating-stars">${starIcons} (${avg})</div>
+                        <p style="font-style:italic; font-size:0.8rem;">"${n.quote}"</p>
+                    </div>`;
+                }).join('');
+                
+                // 3. 更新下拉選單 (保持原本邏輯)
+                const sel = document.getElementById('fbNanny');
+                if(sel && sel.options.length <= 1) {
+                    nannies.forEach(n => sel.add(new Option(n.name, n.name)));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                container.innerHTML = '<p style="color:red; text-align:center;">評價載入失敗</p>';
+            });
         }
 
         function calc() {
@@ -293,27 +321,68 @@
             const name = document.getElementById('fbName').value || "匿名";
             const fbNanny = document.getElementById('fbNanny').value;
             const content = document.getElementById('fbContent').value;
+            
             if(!content) return alert('請填寫內容');
-            
-            let list = JSON.parse(localStorage.getItem('pet_fb_v3')) || [];
-            // 將星數一併存入
-            list.push({ name, fbNanny, content, stars: currentRating, time: new Date().toLocaleString() });
-            localStorage.setItem('pet_fb_v3', JSON.stringify(list));
-            
-            alert('感謝您的建議！'); 
-            document.getElementById('fbContent').value = ""; 
-            setStars(0); // 送出後重設星數
-            showPage('admin');
+
+            // 1. 準備要送到雲端的資料包
+            const feedbackData = {
+                name: name,
+                nanny: fbNanny,
+                content: content,
+                stars: currentRating // 這裡會抓取你目前的星數
+            };
+
+            // 2. 🚀 發射到 Python 後端
+            fetch('/api/submit_feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(feedbackData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert('🎉 雲端存檔成功！資料已同步至 Firestore');
+                    document.getElementById('fbContent').value = ""; 
+                    setStars(0); 
+                    // 這裡可以選擇要不要跳轉，我們先留在原地觀察
+                    // showPage('admin'); 
+                } else {
+                    alert('糟糕！存檔失敗：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('連線失敗！請確認你的 Python (main.py) 是否正在執行中。');
+            });
         }
 
         function renderAdmin() {
-            const list = JSON.parse(localStorage.getItem('pet_fb_v3')) || [];
-            document.getElementById('adminList').innerHTML = list.reverse().map(i => `
-                <div class="card">
-                    <strong>${i.name}</strong> 評價了 <strong>${i.fbNanny}</strong> - ${i.time}<br>
-                    評分：${i.stars > 0 ? "★".repeat(i.stars) : "純建議"}
-                    <p>${i.content}</p>
-                </div>`).join('') || "暫無回饋";
+            const listDiv = document.getElementById('adminList');
+            listDiv.innerHTML = '<div style="text-align:center; padding:50px; color:rgba(255,255,255,0.5);">同步中...</div>';
+
+            // 🚀 向 Python API 請求 Firestore 資料
+            fetch('/api/get_feedbacks')
+            .then(response => response.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    listDiv.innerHTML = '<div class="card">暫無雲端回饋</div>';
+                    return;
+                }
+
+                // 將抓到的雲端資料畫在畫面上，保持你原本的卡片風格
+                listDiv.innerHTML = data.map(i => `
+                    <div class="card" style="color: black; margin-bottom: 10px; text-align: left;">
+                        <strong>${i.name || '匿名'}</strong> 評價了 <strong>${i.nanny || '未指定'}</strong> - ${i.time}<br>
+                        評分：${i.stars > 0 ? '<span style="color:#fbc02d;">' + "★".repeat(i.stars) + '</span>' : "純建議"}
+                        <p style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">${i.content}</p>
+                    </div>`).join('');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                listDiv.innerHTML = '<p style="color:#ffccbc; text-align:center;">讀取失敗，請檢查 Python 是否有啟動</p>';
+            });
         }
 
         function clearData() { if(confirm('確定清空？')) { localStorage.removeItem('pet_fb_v3'); renderAdmin(); } }
