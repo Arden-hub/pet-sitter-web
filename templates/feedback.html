@@ -6,71 +6,60 @@
     <style>
         body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 50px 20px; }
         .box { background: white; padding: 40px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h2 { color: #e67e22; }
-        
-        /* 星星評分樣式 */
-        .stars-container { margin: 20px 0; font-size: 30px; cursor: pointer; }
-        .star { color: #ddd; transition: color 0.2s; }
-        .star.active { color: #f1c40f; } /* 黃色星星 */
-
-        textarea { width: 100%; height: 150px; margin: 20px 0; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        .stars-container { margin: 20px 0; font-size: 35px; cursor: pointer; }
+        .star { color: #ddd; }
+        .star.active { color: #f1c40f; }
+        textarea { width: 100%; height: 120px; margin-bottom: 20px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
         button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>🐾 {% if nanny_name == "一般性建議" %}意見回饋{% else %}評價保母：{{ nanny_name }}{% endif %}</h2>
-        
+        <h2>⭐ 評價：{{ nanny_name }}</h2>
         <div class="stars-container" id="starRating">
-            <span class="star active" data-value="1">★</span>
-            <span class="star active" data-value="2">★</span>
-            <span class="star active" data-value="3">★</span>
-            <span class="star active" data-value="4">★</span>
-            <span class="star active" data-value="5">★</span>
+            <span class="star active" data-val="1">★</span>
+            <span class="star active" data-val="2">★</span>
+            <span class="star active" data-val="3">★</span>
+            <span class="star active" data-val="4">★</span>
+            <span class="star active" data-val="5">★</span>
         </div>
-        <p id="starText">給予 5 顆星好評</p>
-
-        <textarea id="feedbackContent" placeholder="請寫下您對 {{ nanny_name }} 的具體想法..."></textarea>
-        <button onclick="sendFeedback()">送出回饋</button>
+        <p id="starHint" style="color: #e67e22;">給予 5 星好評</p>
+        <textarea id="feedbackContent" placeholder="寫點什麼吧..."></textarea>
+        <button onclick="sendNow()">送出評價</button>
     </div>
 
     <script>
-        let currentStars = 5; // 預設 5 顆星
-
-        // 星星點擊邏輯
+        let currentStars = 5;
         const stars = document.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                currentStars = star.getAttribute('data-value');
-                updateStars(currentStars);
-            });
+
+        stars.forEach(s => {
+            s.onclick = function() {
+                currentStars = parseInt(this.getAttribute('data-val'));
+                stars.forEach(el => {
+                    el.classList.toggle('active', parseInt(el.getAttribute('data-val')) <= currentStars);
+                });
+                document.getElementById('starHint').innerText = `給予 ${currentStars} 星評分`;
+            };
         });
 
-        function updateStars(value) {
-            stars.forEach(s => {
-                s.classList.toggle('active', s.getAttribute('data-value') <= value);
-            });
-            document.getElementById('starText').innerText = `給予 ${value} 顆星評分`;
-        }
-
-        async function sendFeedback() {
-            const content = document.getElementById('feedbackContent').value.trim();
-            if (!content) return alert('請輸入內容');
+        async function sendNow() {
+            const txt = document.getElementById('feedbackContent').value.trim();
+            if(!txt) return alert('請輸入內容');
 
             const payload = {
                 nanny: "{{ nanny_name }}",
-                stars: parseInt(currentStars), // 傳送使用者選的星星數
-                content: content
+                stars: currentStars, // 這裡絕對會抓到變數！
+                content: txt
             };
 
-            const response = await fetch('/api/submit_feedback', {
+            const res = await fetch('/api/submit_feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
-                alert('感謝回饋！');
+            if (res.ok) {
+                alert('感謝評價！');
                 window.location.href = '/nanny';
             }
         }

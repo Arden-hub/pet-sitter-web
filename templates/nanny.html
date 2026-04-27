@@ -70,22 +70,21 @@
             <div class="img-box">
                 <img src="https://storage.cloud.google.com/ardenmio-mumu/Photos%20of%20pet%20sitters/{{ name }}.jpg">
             </div>
-            <div class="info">
-                <div class="name">{{ name }}</div>
-                <div class="shout">{{ slogan }}</div>
-                
-                <div class="review-display">
-                    {# 這裡修正了讀取 reviews 的方式，加上 .get() 更安全 #}
-                    {% if reviews and reviews.get(name) %}
-                        {% for r in reviews.get(name)[:2] %}
-                            <div class="review-item">
-                                <span class="stars">{{ "⭐" * r.stars }}</span> {{ r.content }}
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div style="color: #bdc3c7; text-align: center;">尚無評價</div>
-                    {% endif %}
-                </div>
+            <div class="review-display">
+                {% if stats and stats.get(name) %}
+                    {% set s = stats.get(name) %}
+                    <div class="review-item" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span class="stars">{{ "⭐" * s.display_stars }}</span>
+                        <span style="color: #e67e22; font-weight: bold; font-size: 1rem;">{{ s.avg_stars }}</span>
+                        <span style="color: #95a5a6; font-size: 0.8rem;">({{ s.count }} 則)</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #bdc3c7; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        最新：{{ s.latest_content }}
+                    </div>
+                {% else %}
+                    <div style="color: #bdc3c7; text-align: center; font-size: 0.8rem;">尚無評價</div>
+                {% endif %}
+            </div>
 
                 <a href="/feedback/{{ name }}" class="review-btn">⭐ 我要評價</a>
             </div>
