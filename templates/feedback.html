@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>意見回饋 - 鏟屎官到你家</title>
+    <style>
+        body { font-family: sans-serif; background: #fff9f0; padding: 40px; text-align: center; }
+        .form-box { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        select, input, textarea { width: 100%; margin: 10px 0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        button { background: #e67e22; color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h2>發表評價</h2>
+        <select id="nannyName">
+            <option value="Mio">Mio</option>
+            <option value="阿強">阿強</option>
+            <option value="小花">小花</option>
+            <option value="Yuki">Yuki</option>
+            </select>
+        <input type="number" id="stars" placeholder="星等 (1-5)" min="1" max="5">
+        <textarea id="content" placeholder="說說你的心德..."></textarea>
+        <button onclick="submitFB()">送出回饋</button>
+    </div>
+
+    <script>
+        async function submitFB() {
+            const data = {
+                nanny: document.getElementById('nannyName').value,
+                stars: document.getElementById('stars').value,
+                content: document.getElementById('content').value
+            };
+            const res = await fetch('/api/submit_feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if(res.ok) { alert('感謝回饋！'); window.location.href='/nanny'; }
+        }
+    </script>
+</body>
+</html>
