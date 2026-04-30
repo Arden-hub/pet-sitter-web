@@ -5,19 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>評價 {{ nanny_name }}</title>
     <style>
-        body { font-family: sans-serif; background: #fff9f0; text-align: center; padding: 40px 20px; }
-        .box { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; text-align: center; padding: 40px 20px; }
+        .box { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #e67e22; }
         .star-box { margin: 20px 0; font-size: 35px; cursor: pointer; }
         .star { color: #ddd; transition: 0.2s; }
         .star.active { color: #f1c40f; }
         textarea { width: 100%; height: 120px; margin: 20px 0; padding: 10px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; }
-        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        button { width: 100%; background: #e67e22; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
+        button:hover { background: #d35400; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2 style="color: #e67e22;">🐾 評價保母：{{ nanny_name }}</h2>
+        <h2 style="color: #e67e22;">
+            {% if nanny_name == '一般意見' %}
+                💡 意見回饋專欄
+            {% else %}
+                🐾 評價保母：{{ nanny_name }}
+            {% endif %}
+        </h2>
+        
         <div class="star-box" id="starContainer">
+            <!-- 星星依然保留，可以作為對系統的滿意度評分[cite: 2] -->
             <span class="star active" data-v="1">★</span>
             <span class="star active" data-v="2">★</span>
             <span class="star active" data-v="3">★</span>
@@ -25,7 +34,8 @@
             <span class="star active" data-v="5">★</span>
         </div>
         <p id="starHint" style="color: #e67e22; font-weight: bold;">給予 5 顆星好評</p>
-        <textarea id="content" placeholder="請分享您的服務體驗..."></textarea>
+        
+        <textarea id="content" placeholder="請輸入您的寶貴建議..."></textarea>
         <button onclick="submitReview()">送出回饋</button>
     </div>
 
@@ -61,7 +71,8 @@
                 });
                 if(res.ok) {
                     alert('感謝您的回饋！');
-                    window.location.href = '/nanny';
+                    // 成功後跳回保母列表首頁
+                    window.location.href = '/'; 
                 } else {
                     alert('傳送失敗，請稍後再試');
                 }

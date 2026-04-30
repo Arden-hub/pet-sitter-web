@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>保母團隊 - 專業服務版</title>
+
+    <!-- 在首頁大標題下方加入一個通用回饋按鈕 -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="/feedback" style="text-decoration: none; color: #e67e22; font-weight: bold; border: 1px solid #e67e22; padding: 5px 15px; border-radius: 15px;">
+            💡 我有其他意見要反映
+        </a>
+    </div>
+
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background: #fff9f0; margin: 0; padding: 40px 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
@@ -54,7 +62,6 @@
     <h1 style="text-align:center; color:#e67e22; font-size: 2.5rem; margin-bottom: 40px;">🏆 精英保母戰隊</h1>
     
     <div class="grid">
-        {# 設定保母清單資料 #}
         {% set sitters = [
             ('Mio', '「給您的毛孩最溫暖的陪伴！」'),
             ('Nana', '「豐富的寵物照護經驗，交給我就是最安心的選擇！」'),
@@ -68,10 +75,10 @@
             ('Kevin', '「紀律與關愛並行，讓毛孩在規範中快樂成長。」')
         ] %}
 
-        {# 使用迴圈自動產生卡片 #}
         {% for name, slogan in sitters %}
         <div class="card">
             <div class="img-box">
+                <!-- 圖片連結保持不動 -->
                 <img src="https://pet.ardenmio.com/Photos%20of%20pet%20sitters/{{ name }}.jpg">
             </div>
             <div class="info">
@@ -79,17 +86,20 @@
                 <div class="shout">{{ slogan }}</div>
                 
                 <div class="review-display">
-                    {% if reviews and reviews.get(name) %}
-                        {% for r in reviews.get(name)[:2] %} {# 顯示最新的兩則 #}
-                            <div class="review-item">
-                                <span class="stars">{{ "⭐" * r.stars }}</span> {{ r.content }}
-                            </div>
-                        {% endfor %}
+                    {% if summary and summary.get(name) %}
+                        {% set data = summary.get(name) %}
+                        <div class="review-item" style="text-align: center;">
+                            <span class="stars">
+                                {% for i in range(data.avg) %}⭐{% endfor %}
+                            </span>
+                            <span style="color: #a88a7e;">({{ data.count }} 則評價)</span>
+                        </div>
                     {% else %}
                         <div style="color: #bdc3c7; text-align: center;">尚無評價</div>
                     {% endif %}
                 </div>
 
+                <!-- 評價輸入端口保留[cite: 1] -->
                 <a href="/feedback?nanny={{ name }}" class="review-btn">⭐ 我要評價</a>
             </div>
             <div class="footer"></div>
