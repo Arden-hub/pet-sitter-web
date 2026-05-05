@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiki's Level Adventure</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style> 
+        body { margin: 0; background-color: #222; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        #game-container { border: 4px solid #444; }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+
+<script>
+// 1. 多關卡數據加回
+const levelData = [
+    { 
+        platforms: [
+            [400, 580, 2],    // 大底座
+            [600, 450, 0.6],  // 右中平台
+            [250, 350, 0.6],  // 左中平台
+            [500, 200, 0.6]   // 上層平台
+        ],
+        goal: { x: 500, y: 150 }
+    },
+    { 
+        platforms: [
+            [400, 580, 2],
+            [100, 420, 0.5],
+            [400, 320, 0.5],
+            [700, 220, 0.5]
+        ],
+        goal: { x: 700, y: 160 }
+    },
+    { 
+        platforms: [
+            [100, 580, 0.6],
+            [300, 480, 0.4],
+            [500, 380, 0.4],
+            [700, 280, 0.4],
+            [400, 180, 0.4]
+        ],
+        goal: { x: 400, y: 120 }
+    }
+];
+
+class MainScene extends Phaser.Scene {
+    constructor() {
+        super('MainScene');
+        this.currentLevel = 0; // 紀錄當前關卡
+    }
+
+    preload() {
+        // 載入高清去背圖
+        this.load.image('playerCat', 'kiki_player.png');
+        this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
+        this.load.image('star', 'https://labs.phaser.io/assets/demoscene/star.png'); // 載入星星作為過關目標
+    }
+
+    create() {
+        this.loadLevel();
+    }
+
+    loadLevel() {
+        // 清除上一關的物體（如果有）
+        if (this.platforms) this.platforms.clear(true, true);
+        if (this.player) this.player.destroy();
+        if (this.goal) this.goal.destroy();
+
+        const data = levelData[this.currentLevel];
+
+        // 2. 建立靜態平台
+        this.platforms = this.physics.add.staticGroup();
+        data.platforms.forEach(p => {
+            this.platforms.create(p[0], p[1], 'ground').setScale(p[2]).refreshBody();
+        });
+
+        // 3. 建立 Kiki
+        this.player = this.physics.add.sprite(100, 450, 'playerCat');
+        this.player.setScale(0.05); // 維持你要求的 0.05
+        this.player.setCollideWorldBounds(true);
+        this.player.setBounce(0.1);
+        this.player.setDragX(1200);
+
+        // 4. 建立星星 (目標物)
+        this.goal = this.physics.add.sprite(data.goal.x, data.goal.y, 'star');
+        this.goal.body.allowGravity = false; // 星星不掉落
+
+        // 5. 設定碰撞與重疊偵測
+        this.physics.add.collider(this.player, this.platforms);
+        
+        // 碰撞星星過關邏輯
+        this.physics.add.overlap(this.player, this.goal, this.reachGoal, null, this);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        // 顯示關卡數
+        if (this.scoreText) this.scoreText.destroy();
+        this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { fontSize: '24px', fill: '#000' });
+    }
+
+    reachGoal() {
+        this.currentLevel++;
+        if (this.currentLevel < levelData.length) {
+            this.loadLevel(); // 載入下一關
+        } else {
+            this.add.text(200, 250, '恭喜破關！🎉', { fontSize: '64px', fill: '#000', backgroundColor: '#fff' });
+            this.physics.pause();
+        }
+    }
+
+    update() {
+        // 水平移動
+        if (this.cursors.left.isDown) {
+            this.player.setVelocityX(-280);
+            this.player.flipX = true;
+        } else if (this.cursors.right.isDown) {
+            this.player.setVelocityX(280);
+            this.player.flipX = false;
+        } else {
+            this.player.setVelocityX(0);
+        }
+
+        // 跳躍邏輯
+        if (this.cursors.up.isDown && this.player.body.touching.down) {
+            this.player.setVelocityY(-650);
+        }
+    }
+}
+
+const config = {
+    type: Phaser.AUTO,
+    parent: 'game-container',
+    width: 800,
+    height: 600,
+    backgroundColor: '#87CEEB',
+    antialias: true,
+    roundPixels: false,
+    physics: {
+        default: 'arcade',
+        arcade: { 
+            gravity: { y: 1300 },
+            debug: false 
+        }
+    },
+    scene: MainScene
+};
+
+const game = new Phaser.Game(config);
+</script>
+</body>
+</html>
