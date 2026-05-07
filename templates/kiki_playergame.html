@@ -13,7 +13,7 @@
     <div id="game-container"></div>
 
 <script>
-// 1. 完整保留您的多關卡數據
+// 1. 完整保留您的關卡數據
 const levelData = [
     { 
         platforms: [[400, 580, 2], [600, 450, 0.6], [250, 350, 0.6], [500, 200, 0.6]],
@@ -36,7 +36,7 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        // 關鍵修正：宣告跨網域匿名存取，解決圖片變黑點的問題
+        // --- 關鍵修正：解決 CORS 跨網域圖片顯示為黑塊的問題 ---
         this.load.crossOrigin = 'anonymous'; 
         this.load.image('playerCat', 'https://storage.googleapis.com/pet-sitter-images/kiki_playergame/kiki_player.png');
         this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
@@ -44,38 +44,41 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 修正：必須在此呼叫 loadLevel，平台才會出現
+        // --- 核心修正：統一由 loadLevel 初始化，避免 create 重複建立物件 ---
         this.loadLevel();
     }
 
     loadLevel() {
-        // 清除上一關物體
+        // 清除舊物件
         if (this.platforms) this.platforms.clear(true, true);
         if (this.player) this.player.destroy();
         if (this.goal) this.goal.destroy();
+        if (this.scoreText) this.scoreText.destroy();
 
         const data = levelData[this.currentLevel];
 
+        // 建立平台
         this.platforms = this.physics.add.staticGroup();
         data.platforms.forEach(p => {
             this.platforms.create(p[0], p[1], 'ground').setScale(p[2]).refreshBody();
         });
 
+        // 建立 Kiki：維持您的 0.05 比例
         this.player = this.physics.add.sprite(100, 450, 'playerCat');
-        this.player.setScale(0.05); // 維持您要求的 0.05
+        this.player.setScale(0.05); 
         this.player.setCollideWorldBounds(true);
         this.player.setBounce(0.1);
         this.player.setDragX(1200);
 
+        // 建立星星
         this.goal = this.physics.add.sprite(data.goal.x, data.goal.y, 'star');
         this.goal.body.allowGravity = false;
 
+        // 物理偵測與控制
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.overlap(this.player, this.goal, this.reachGoal, null, this);
-
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        if (this.scoreText) this.scoreText.destroy();
         this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { fontSize: '24px', fill: '#000' });
     }
 
@@ -117,7 +120,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: { 
-            gravity: { y: 1300 }, // 保留您的重力設定
+            gravity: { y: 1300 }, // 維持您的重力設定
             debug: false 
         }
     },
