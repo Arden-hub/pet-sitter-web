@@ -15,31 +15,15 @@
 <script>
 const levelData = [
     { 
-        platforms: [
-            [400, 580, 2],    // 大底座
-            [600, 450, 0.6],  // 右中平台
-            [250, 350, 0.6],  // 左中平台
-            [500, 200, 0.6]   // 上層平台
-        ],
+        platforms: [[400, 580, 2], [600, 450, 0.6], [250, 350, 0.6], [500, 200, 0.6]],
         goal: { x: 500, y: 150 }
     },
     { 
-        platforms: [
-            [400, 580, 2],
-            [100, 420, 0.5],
-            [400, 320, 0.5],
-            [700, 220, 0.5]
-        ],
+        platforms: [[400, 580, 2], [100, 420, 0.5], [400, 320, 0.5], [700, 220, 0.5]],
         goal: { x: 700, y: 160 }
     },
     { 
-        platforms: [
-            [100, 580, 0.6],
-            [300, 480, 0.4],
-            [500, 380, 0.4],
-            [700, 280, 0.4],
-            [400, 180, 0.4]
-        ],
+        platforms: [[100, 580, 0.6], [300, 480, 0.4], [500, 380, 0.4], [700, 280, 0.4], [400, 180, 0.4]],
         goal: { x: 400, y: 120 }
     }
 ];
@@ -51,19 +35,20 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        // 載入資產
+        // 重要：加入跨網域讀取宣告
+        this.load.crossOrigin = 'anonymous'; 
         this.load.image('playerCat', 'https://storage.googleapis.com/pet-sitter-images/kiki_playergame/kiki_player.png');
         this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
         this.load.image('star', 'https://labs.phaser.io/assets/demoscene/star.png');
     }
 
     create() {
-        // 核心修正：初始化時呼叫 loadLevel
+        // 啟動首關載入
         this.loadLevel();
     }
 
     loadLevel() {
-        // 1. 清除舊有的物件（如果存在）
+        // 銷毀舊物件前先確認其是否存在
         if (this.platforms) this.platforms.clear(true, true);
         if (this.player) this.player.destroy();
         if (this.goal) this.goal.destroy();
@@ -71,37 +56,29 @@ class MainScene extends Phaser.Scene {
 
         const data = levelData[this.currentLevel];
 
-        // 2. 建立平台
+        // 建立平台
         this.platforms = this.physics.add.staticGroup();
         data.platforms.forEach(p => {
             this.platforms.create(p[0], p[1], 'ground').setScale(p[2]).refreshBody();
         });
 
-        // 3. 建立玩家 (Kiki)
-        // 修正：將 Scale 設為 0.3，避免變成一個點
+        // 建立主角：比例調整為 0.35 以確保可視度
         this.player = this.physics.add.sprite(100, 450, 'playerCat');
-        this.player.setScale(0.3); 
+        this.player.setScale(0.35); 
         this.player.setCollideWorldBounds(true);
         this.player.setBounce(0.1);
         this.player.setDragX(1200);
 
-        // 4. 建立星星 (目標)
+        // 建立過關目標
         this.goal = this.physics.add.sprite(data.goal.x, data.goal.y, 'star');
         this.goal.body.allowGravity = false;
 
-        // 5. 設定碰撞與重疊
+        // 設定物理偵測
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.overlap(this.player, this.goal, this.reachGoal, null, this);
 
-        // 6. 設定控制鍵
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // 7. 顯示關卡資訊
-        this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { 
-            fontSize: '24px', 
-            fill: '#000',
-            fontStyle: 'bold'
-        });
+        this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { fontSize: '24px', fill: '#000', fontStyle: 'bold' });
     }
 
     reachGoal() {
@@ -109,12 +86,7 @@ class MainScene extends Phaser.Scene {
         if (this.currentLevel < levelData.length) {
             this.loadLevel();
         } else {
-            this.add.text(200, 250, '恭喜破關！🎉', { 
-                fontSize: '64px', 
-                fill: '#fff', 
-                backgroundColor: '#f39c12',
-                padding: { x: 20, y: 10 }
-            });
+            this.add.text(200, 250, '恭喜破關！🎉', { fontSize: '64px', fill: '#fff', backgroundColor: '#f39c12', padding: { x: 20, y: 10 } });
             this.physics.pause();
         }
     }
@@ -122,7 +94,6 @@ class MainScene extends Phaser.Scene {
     update() {
         if (!this.player || !this.player.body) return;
 
-        // 水平移動
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-280);
             this.player.flipX = true;
@@ -133,7 +104,6 @@ class MainScene extends Phaser.Scene {
             this.player.setVelocityX(0);
         }
 
-        // 跳躍
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-650);
         }
