@@ -13,7 +13,6 @@
     <div id="game-container"></div>
 
 <script>
-// 1. 多關卡數據加回
 const levelData = [
     { 
         platforms: [
@@ -48,75 +47,81 @@ const levelData = [
 class MainScene extends Phaser.Scene {
     constructor() {
         super('MainScene');
-        this.currentLevel = 0; // 紀錄當前關卡
+        this.currentLevel = 0;
     }
 
     preload() {
-        // 載入高清去背圖
+        // 載入資產
         this.load.image('playerCat', 'https://storage.googleapis.com/pet-sitter-images/kiki_playergame/kiki_player.png');
         this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
-        this.load.image('star', 'https://labs.phaser.io/assets/demoscene/star.png'); // 載入星星作為過關目標
+        this.load.image('star', 'https://labs.phaser.io/assets/demoscene/star.png');
     }
 
     create() {
-        // 檢查這裡的 setScale，如果設成 0.01 就會變成一個點
-        this.player = this.physics.add.sprite(100, 450, 'playerCat');
-        
-        // 試著先註解掉這行，看看原圖大小是否正常
-        // this.player.setScale(0.5); 
-        
-        this.player.setCollideWorldBounds(true);
+        // 核心修正：初始化時呼叫 loadLevel
+        this.loadLevel();
     }
 
     loadLevel() {
-        // 清除上一關的物體（如果有）
+        // 1. 清除舊有的物件（如果存在）
         if (this.platforms) this.platforms.clear(true, true);
         if (this.player) this.player.destroy();
         if (this.goal) this.goal.destroy();
+        if (this.scoreText) this.scoreText.destroy();
 
         const data = levelData[this.currentLevel];
 
-        // 2. 建立靜態平台
+        // 2. 建立平台
         this.platforms = this.physics.add.staticGroup();
         data.platforms.forEach(p => {
             this.platforms.create(p[0], p[1], 'ground').setScale(p[2]).refreshBody();
         });
 
-        // 3. 建立 Kiki
+        // 3. 建立玩家 (Kiki)
+        // 修正：將 Scale 設為 0.3，避免變成一個點
         this.player = this.physics.add.sprite(100, 450, 'playerCat');
-        this.player.setScale(0.05); // 維持你要求的 0.05
+        this.player.setScale(0.3); 
         this.player.setCollideWorldBounds(true);
         this.player.setBounce(0.1);
         this.player.setDragX(1200);
 
-        // 4. 建立星星 (目標物)
+        // 4. 建立星星 (目標)
         this.goal = this.physics.add.sprite(data.goal.x, data.goal.y, 'star');
-        this.goal.body.allowGravity = false; // 星星不掉落
+        this.goal.body.allowGravity = false;
 
-        // 5. 設定碰撞與重疊偵測
+        // 5. 設定碰撞與重疊
         this.physics.add.collider(this.player, this.platforms);
-        
-        // 碰撞星星過關邏輯
         this.physics.add.overlap(this.player, this.goal, this.reachGoal, null, this);
 
+        // 6. 設定控制鍵
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // 顯示關卡數
-        if (this.scoreText) this.scoreText.destroy();
-        this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { fontSize: '24px', fill: '#000' });
+        // 7. 顯示關卡資訊
+        this.scoreText = this.add.text(16, 16, 'Level: ' + (this.currentLevel + 1), { 
+            fontSize: '24px', 
+            fill: '#000',
+            fontStyle: 'bold'
+        });
     }
 
     reachGoal() {
         this.currentLevel++;
         if (this.currentLevel < levelData.length) {
-            this.loadLevel(); // 載入下一關
+            this.loadLevel();
         } else {
-            this.add.text(200, 250, '恭喜破關！🎉', { fontSize: '64px', fill: '#000', backgroundColor: '#fff' });
+            this.add.text(200, 250, '恭喜破關！🎉', { 
+                fontSize: '64px', 
+                fill: '#fff', 
+                backgroundColor: '#f39c12',
+                padding: { x: 20, y: 10 }
+            });
             this.physics.pause();
         }
     }
 
     update() {
+        if (!this.player || !this.player.body) return;
+
         // 水平移動
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-280);
@@ -128,7 +133,7 @@ class MainScene extends Phaser.Scene {
             this.player.setVelocityX(0);
         }
 
-        // 跳躍邏輯
+        // 跳躍
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-650);
         }
@@ -141,8 +146,6 @@ const config = {
     width: 800,
     height: 600,
     backgroundColor: '#87CEEB',
-    antialias: true,
-    roundPixels: false,
     physics: {
         default: 'arcade',
         arcade: { 
