@@ -85,17 +85,17 @@ def submit_feedback():
         print(f"寫入失敗: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
-    @app.route('/ig')
-    def ig_page():
-        return render_template('ig.html')
+@app.route('/ig')
+def ig_page():
+    return render_template('ig.html')
 
-    @app.route('/fb')
-    def fb_page():
-        return render_template('fb.html')
+@app.route('/fb')
+def fb_page():
+    return render_template('fb.html')
 
-    @app.route('/kiki_playergame')
-    def game_page():
-        return render_template('kiki_playergame.html')
+@app.route('/kiki_playergame')
+def game_page():
+    return render_template('kiki_playergame.html')
 
 # --- 4. 啟動設定 ---
 if __name__ == '__main__':
