@@ -59,7 +59,13 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        this.loadLevel();
+        // 檢查這裡的 setScale，如果設成 0.01 就會變成一個點
+        this.player = this.physics.add.sprite(100, 450, 'playerCat');
+        
+        // 試著先註解掉這行，看看原圖大小是否正常
+        // this.player.setScale(0.5); 
+        
+        this.player.setCollideWorldBounds(true);
     }
 
     loadLevel() {
