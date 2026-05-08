@@ -1,227 +1,43 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鏟屎官到你家 - 專業到府餵養服務</title>
-    <style>
-        :root { 
-            --primary: #e67e22; 
-            --bg-warm: #fff9f0; 
-            --card-bg: #ffffff; 
-            --text-dark: #5d4037; 
-            --accent: #fbe7c6; 
-        }
+let currentSessionId = "-";
 
-        body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; background-color: var(--bg-warm); color: var(--text-dark); line-height: 1.6; }
+function toggleChat() {
+    const win = document.getElementById('chat-window');
+    win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+}
+
+function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const msgBox = document.getElementById('chat-messages');
+    const userText = input.value.trim();
+
+    if (!userText) return;
+
+    // 顯示使用者訊息
+    msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+    input.value = '';
+    msgBox.scrollTop = msgBox.scrollHeight;
+
+    // 顯示載入中
+    const loadingId = 'loading-' + Date.now();
+    msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在思考中...🐾</span></div>`;
+    msgBox.scrollTop = msgBox.scrollHeight;
+
+    // 呼叫後端 API
+    fetch('/api/kiki_chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
         
-        nav { 
-            background: #925646; 
-            padding: 0.8rem 2rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-        }        
-        .logo-container { display: flex; align-items: center; text-decoration: none; }
-        .logo-img-wrapper { height: 50px; width: 50px; background: #da8210; border-radius: 50%; margin-right: 12px; border: 2px solid var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .logo-img { height: 80%; width: 80%; object-fit: contain; }
-        .logo-text { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
-
-        nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
-        nav ul li { margin-left: 15px; }
-        nav ul li a { 
-            text-decoration: none; 
-            color: #f3d1bb; 
-            font-weight: bold; 
-            font-size: 1.1rem; 
-            transition: 0.3s; 
-        }
-        nav ul li a:hover { color: var(--primary); }
-
-        .page { padding: 30px 15px; max-width: 1000px; margin: 0 auto; }
-
-        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
-        .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
-        
-        .shop-section { display: flex; align-items: stretch; background: white; border-radius: 20px; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); flex-wrap: wrap; }
-        .shop-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; }
-        .shop-section img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
-
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .product-item { background: white; border-radius: 20px; text-align: center; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .product-img-wrapper { width: 100%; height: 250px; }
-        .product-item img { width: 100%; height: 100%; object-fit: cover; }
-        .product-text { padding: 20px; }
-
-        .social-practice { margin-top: 40px; padding: 30px; text-align: center; background: rgba(230, 126, 34, 0.08); border-radius: 20px; border: 2px dashed var(--accent); }
-
-        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
-        #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        #chat-button:hover { transform: scale(1.1); }
-        #chat-window { display: none; width: 320px; height: 450px; background: white; position: absolute; bottom: 80px; right: 0; border-radius: 20px; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #eee; }
-        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg-warm); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; word-wrap: break-word; }
-        .msg-ai { background: white; align-self: flex-start; border: 1px solid #eee; color: var(--text-dark); }
-        .msg-user { background: var(--accent); align-self: flex-end; color: var(--text-dark); }
-        #chat-input-area { padding: 10px; display: flex; border-top: 1px solid #eee; background: #fff; }
-        #chat-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 0.9rem; }
-        .typing-dots { color: #888; font-size: 0.8rem; }
-
-        footer { text-align: center; padding: 40px; color: #bcaaa4; font-size: 0.85rem; }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <a href="index" class="logo-container">
-            <div class="logo-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/kiki.png" class="logo-img"></div>
-            <span class="logo-text">鏟屎官到你家</span>
-        </a>
-        <ul>
-            <li><a href="index">首頁</a></li>
-            <li><a href="nanny">保母介紹</a></li>
-            <li><a href="kiki_playergame" target="_blank">Kiki小遊戲</a></li>
-            <li><a href="https://pet-sitter-api-91777479966.asia-east1.run.app">預約服務</a></li>
-            <li><a href="feedback">意見回饋</a></li>
-        </ul>
-    </nav>
-
-    <div class="page">
-        <section class="home-hero">
-            <h2>寵物到府餵養服務！</h2>
-            <p style="font-weight: bold;">餵食，鏟屎，放飯，遛狗</p>
-        </section>
-
-        <div class="slogan">" 最適合毛孩的照顧方式 "</div>
-
-        <section class="shop-section">
-            <div class="shop-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg"></div>
-            <div class="shop-info">
-                <h2>📍 服務地區</h2>
-                <p>大台北、桃園、台中地區<br>全心全意，為您服務～</p>
-            </div>
-        </section>
-
-        <section class="product-grid">
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-1.png"></div>
-                <div class="product-text"><h3>有愛</h3><p>讓毛小孩感受溫度</p></div>
-            </div>
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-2.png"></div>
-                <div class="product-text"><h3>負責</h3><p>使命必達的照顧</p></div>
-            </div>
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-3.png"></div>
-                <div class="product-text"><h3>專業</h3><p>標準化回報流程</p></div>
-            </div>
-        </section>
-
-        <section class="social-practice">
-            <p style="font-weight: bold;">🔗 連結更多“鏟屎官到你家”相關社群～看更多可愛貓咪～</p>
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top:10px;">
-                <a href="ig" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
-                <a href="fb" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 頁面</a>
-            </div>
-        </section>
-    </div>
-
-    <div id="chat-widget">
-        <div id="chat-button" onclick="toggleChat()">
-            <img src="https://storage.googleapis.com/pet-sitter-images/index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;">
-        </div>
-        <div id="chat-window">
-            <div id="chat-header">
-                <span>Kiki 溫馨客服</span>
-                <span onclick="toggleChat()" style="cursor:pointer; font-size: 1.2rem;">✕</span>
-            </div>
-            <div id="chat-messages">
-                <div class="msg msg-ai">
-                    喵嗚～歡迎來到鏟屎官到你家！🐾<br>
-                    我是最愛毛孩的 AI 助教 <strong>Kiki</strong>。❤️<br><br>
-                    想多了解我們嗎？輸入關鍵字讓 Kiki 為你解答：<br>
-                    💰 <strong>「多少錢」</strong>：服務收費與細節<br>
-                    🐱 <strong>「保母」</strong>：認識專業的夥伴<br>
-                    📍 <strong>「地區」</strong>：看我們去哪裡服務<br>
-                    📅 <strong>「預約」</strong>：開啟溫馨照顧之旅
-                </div>
-            </div>
-            <div id="chat-input-area">
-                <input type="text" id="chat-input" placeholder="想問什麼呢？按 Enter 送出..." onkeypress="if(event.keyCode==13) sendMessage()">
-            </div>
-        </div>
-    </div>
-
-    <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
-
-    <script>
-        // 用來記錄目前的對話 Session
-        let currentSessionId = "-";
-
-        function toggleChat() {
-            const win = document.getElementById('chat-window');
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-            if (win.style.display === 'flex') {
-                const msgBox = document.getElementById('chat-messages');
-                msgBox.scrollTop = msgBox.scrollHeight;
-                document.getElementById('chat-input').focus();
-            }
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const msgBox = document.getElementById('chat-messages');
-            const userText = input.value.trim();
-
-            if (!userText) return;
-
-            // 1. 顯示使用者發送的訊息
-            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-            input.value = '';
-            msgBox.scrollTop = msgBox.scrollHeight;
-
-            // 2. 顯示 Kiki 正在思考的動畫
-            const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線大腦...喵...</span></div>`;
-            msgBox.scrollTop = msgBox.scrollHeight;
-
-            // 3. 呼叫後端的 kiki_chat API
-            fetch('/api/kiki_chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    message: userText, 
-                    session_id: currentSessionId 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 移除思考動畫
-                document.getElementById(loadingId).remove();
-                
-                // 更新 Session ID (維持連貫對話)
-                currentSessionId = data.session_id;
-
-                // 將回傳的純文字轉換為 HTML 支援的換行 (<br>) 後顯示
-                const formattedReply = data.reply.replace(/\n/g, '<br>');
-                msgBox.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
-                msgBox.scrollTop = msgBox.scrollHeight;
-            })
-            .catch(error => {
-                console.error("API 錯誤:", error);
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) {
-                    loadingEl.innerHTML = "喵嗚... 連線發生錯誤，請確認後端服務已啟動。";
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+        msgBox.innerHTML += `<div class="msg msg-ai">${data.reply}</div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+    })
+    .catch(err => {
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.innerHTML = "喵嗚... 連線失敗，請檢查後端服務。";
+    });
+}
