@@ -42,18 +42,23 @@
         .page { padding: 30px 8px; max-width: 1000px; margin: 0 auto; }
 
         .home-hero { 
-            /* ... 其他屬性保持不變 ... */
+            text-align: center; 
+            padding: 80px 20px; 
+            background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), 
+                        url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); 
             background-size: cover; 
             
-            /* 調整重點：使用 top 或是 0%~20% 的數值 */
-            /* 這會將圖片的頂部對齊容器頂部，視覺上內容會往下推 */
-            background-position: center top; 
+            /* 1. 底圖位置：第一個數值是左右置中，第二個 20% 讓圖片內容往下降（顯示更多上方內容） */
+            background-position: center 20%; 
             
-            /* 如果覺得太靠上，可以微調百分比，例如 center 10% */
-            width: 100%; 
-            box-sizing: border-box;
+            /* 2. 容器寬度：設定為 100% 並調大 max-width 或直接移除來增加寬度 */
+            width: 100%;
+            max-width: 1200px; /* 您可以根據需求調大這個數值，例如 1400px 或刪除這行變全螢幕 */
+            margin: 0 auto 30px; /* 增加 auto 確保容器在大螢幕時能水平居中 */
+            
+            border-radius: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
-        
         .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
         .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
         
@@ -138,7 +143,6 @@
             <div style="display: flex; justify-content: center; gap: 10px; margin-top:10px;">
                 <a href="ig" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">IG 頁面</a>
                 <a href="fb" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">FB 頁面</a>
-                <a href="kiki_playergame" style="color:var(--primary); text-decoration:none; border:1px solid var(--primary); padding:8px 15px; border-radius:8px;">kiki小遊戲</a>
             </div>
         </section>
     </div>
