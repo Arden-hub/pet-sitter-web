@@ -29,7 +29,7 @@
         body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; background-color: var(--bg-warm); color: var(--text-dark); line-height: 1.6; }
         
         nav { 
-            background: #5d4037; 
+            background: #8e6f66; 
             padding: 0.8rem 2rem; 
             display: flex; 
             justify-content: space-between; 
@@ -51,7 +51,7 @@
             color: #ffffff; 
             font-weight: bold; 
             font-size: 0.95rem; 
-            transition: 0.3s; 
+            transition: 0.5s; 
         }
         nav ul li a:hover { color: var(--primary); }
 
@@ -88,6 +88,17 @@
         .typing-dots { color: #888; font-size: 0.8rem; }
 
         footer { text-align: center; padding: 40px; color: #bcaaa4; font-size: 0.85rem; }
+
+        /* 強制隱藏 Google 原廠搜尋小工具的按鈕 */
+        .df-messenger-wrapper, 
+        gen-search-widget {
+            --gen-search-widget-launcher-display: none !important;
+        }
+
+        #df-messenger-wrapper {
+            display: none !important;
+        }
+
     </style>
 </head>
 <body>
