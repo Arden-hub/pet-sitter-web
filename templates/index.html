@@ -1,43 +1,80 @@
-let currentSessionId = "-";
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鏟屎官到你家</title>
+    <style>
+        /* 這裡保留你原本的 CSS 樣式 */
+        :root { --primary: #e67e22; --bg-warm: #fff9f0; --text-dark: #5d4037; --accent: #fbe7c6; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-warm); margin: 0; }
+        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+        #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        #chat-window { display: none; width: 320px; height: 450px; background: white; border-radius: 20px; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: absolute; bottom: 80px; right: 0; }
+        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; }
+        .msg-ai { background: #f0f0f0; align-self: flex-start; }
+        .msg-user { background: var(--accent); align-self: flex-end; }
+        #chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; }
+        #chat-input { flex: 1; border: 1px solid #ddd; padding: 8px; border-radius: 20px; outline: none; }
+    </style>
+</head>
+<body>
 
-function toggleChat() {
-    const win = document.getElementById('chat-window');
-    win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-}
+    <div id="chat-widget">
+        <div id="chat-button" onclick="toggleChat()">
+            <img src="https://storage.googleapis.com/pet-sitter-images/index_images/kiki.png" style="width:45px; height:45px; border-radius:50%;">
+        </div>
+        <div id="chat-window">
+            <div id="chat-header">Kiki 溫馨客服</div>
+            <div id="chat-messages">
+                <div class="msg msg-ai">喵嗚～我是 Kiki！有什麼我可以幫你的嗎？🐾</div>
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="請輸入訊息..." onkeypress="if(event.keyCode==13) sendMessage()">
+            </div>
+        </div>
+    </div>
 
-function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const msgBox = document.getElementById('chat-messages');
-    const userText = input.value.trim();
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+        }
 
-    if (!userText) return;
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msgBox = document.getElementById('chat-messages');
+            const userText = input.value.trim();
+            if (!userText) return;
 
-    // 顯示使用者訊息
-    msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-    input.value = '';
-    msgBox.scrollTop = msgBox.scrollHeight;
+            // 顯示使用者訊息
+            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+            input.value = '';
+            msgBox.scrollTop = msgBox.scrollHeight;
 
-    // 顯示載入中
-    const loadingId = 'loading-' + Date.now();
-    msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在思考中...🐾</span></div>`;
-    msgBox.scrollTop = msgBox.scrollHeight;
+            // 顯示載入狀態
+            const loadingId = 'loading-' + Date.now();
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}">Kiki 思考中...🐾</div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
 
-    // 呼叫後端 API
-    fetch('/api/kiki_chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.remove();
-        
-        msgBox.innerHTML += `<div class="msg msg-ai">${data.reply}</div>`;
-        msgBox.scrollTop = msgBox.scrollHeight;
-    })
-    .catch(err => {
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.innerHTML = "喵嗚... 連線失敗，請檢查後端服務。";
-    });
-}
+            // 呼叫後端 API
+            fetch('/api/kiki_chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userText })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById(loadingId).remove();
+                msgBox.innerHTML += `<div class="msg msg-ai">${data.reply}</div>`;
+                msgBox.scrollTop = msgBox.scrollHeight;
+            })
+            .catch(err => {
+                document.getElementById(loadingId).innerHTML = "連線失敗，請稍後再試。喵～";
+            });
+        }
+    </script>
+</body>
+</html>
