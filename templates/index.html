@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+    <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW&key=AIzaSyB-2EKGK-pKPjYpdEp76bMQboSodANCJW0"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -28,36 +28,25 @@
         nav ul li a:hover { color: var(--primary); }
 
         .page { padding: 30px 15px; max-width: 1000px; margin: 0 auto; }
-
-        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
+        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; }
+        .home-hero h2 { color: var(--primary); font-size: 2.2rem; }
         .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
         
         .shop-section { display: flex; align-items: stretch; background: white; border-radius: 20px; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); flex-wrap: wrap; }
         .shop-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; }
-        .shop-section img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
+        .shop-section img { width: 100%; height: 100%; object-fit: cover; }
+        .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .product-item { background: white; border-radius: 20px; text-align: center; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .product-img-wrapper { width: 100%; height: 250px; }
-        .product-item img { width: 100%; height: 100%; object-fit: cover; }
-        .product-text { padding: 20px; }
-
-        /* 聊天室樣式 */
         #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
-        #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
-        #chat-button:hover { transform: scale(1.1); }
+        #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         #chat-window { display: none; width: 320px; height: 450px; background: white; position: absolute; bottom: 80px; right: 0; border-radius: 20px; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #eee; }
-        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg-warm); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; }
-        .msg-ai { background: white; align-self: flex-start; border: 1px solid #eee; color: var(--text-dark); }
-        .msg-user { background: var(--accent); align-self: flex-end; color: var(--text-dark); }
-        #chat-input-area { padding: 10px; display: flex; border-top: 1px solid #eee; background: #fff; }
-        #chat-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 0.9rem; }
-        .typing-dots { color: #888; font-size: 0.8rem; }
-
+        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg-warm); display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; }
+        .msg-ai { background: white; align-self: flex-start; border: 1px solid #eee; }
+        .msg-user { background: var(--accent); align-self: flex-end; }
+        #chat-input-area { padding: 10px; display: flex; border-top: 1px solid #eee; }
+        #chat-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; outline: none; }
         footer { text-align: center; padding: 40px; color: #bcaaa4; font-size: 0.85rem; }
     </style>
 </head>
@@ -68,53 +57,23 @@
             <div class="logo-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/kiki.png" class="logo-img"></div>
             <span class="logo-text">鏟屎官到你家</span>
         </a>
-        <ul>
-            <li><a href="/">首頁</a></li>
-            <li><a href="/nanny">保母介紹</a></li>
-            <li><a href="/kiki_playergame" target="_blank">Kiki小遊戲</a></li>
-            <li><a href="https://pet-sitter-api-91777479966.asia-east1.run.app">預約服務</a></li>
-            <li><a href="/feedback">意見回饋</a></li>
-        </ul>
     </nav>
 
     <div class="page">
         <section class="home-hero">
             <h2>寵物到府餵養服務！</h2>
-            <p style="font-weight: bold;">餵食，鏟屎，放飯，遛狗</p>
+            <p>餵食，鏟屎，放飯，遛狗</p>
         </section>
-
         <div class="slogan">" 最適合毛孩的照顧方式 "</div>
-
-        <section class="shop-section">
-            <div class="shop-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg"></div>
-            <div class="shop-info">
-                <h2>📍 服務地區</h2>
-                <p>大台北、桃園、台中地區<br>全心全意，為您服務～</p>
-            </div>
-        </section>
-
-        <section class="product-grid">
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-1.png"></div>
-                <div class="product-text"><h3>有愛</h3><p>讓毛小孩感受溫度</p></div>
-            </div>
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-2.png"></div>
-                <div class="product-text"><h3>負責</h3><p>使命必達的照顧</p></div>
-            </div>
-            <div class="product-item">
-                <div class="product-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/cat-baby-3.png"></div>
-                <div class="product-text"><h3>專業</h3><p>標準化回報流程</p></div>
-            </div>
-        </section>
     </div>
 
     <gen-search-widget
-      id="kiki-ai-engine"
-      configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-      triggerId="chat-input"
-      style="display: none;">
+        id="kiki-brain"
+        configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
+        triggerId="searchWidgetTrigger"
+        style="display: none;">
     </gen-search-widget>
+    <input type="hidden" id="searchWidgetTrigger">
 
     <div id="chat-widget">
         <div id="chat-button" onclick="toggleChat()">
@@ -123,7 +82,7 @@
         <div id="chat-window">
             <div id="chat-header">
                 <span>Kiki 溫馨客服</span>
-                <span onclick="toggleChat()" style="cursor:pointer; font-size: 1.2rem;">✕</span>
+                <span onclick="toggleChat()" style="cursor:pointer;">✕</span>
             </div>
             <div id="chat-messages">
                 <div class="msg msg-ai">喵嗚～我是 Kiki！🐾<br>想知道到府餵養的收費或是服務內容嗎？儘管問我喵！</div>
@@ -140,6 +99,9 @@
         function toggleChat() {
             const win = document.getElementById('chat-window');
             win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+            if (win.style.display === 'flex') {
+                document.getElementById('chat-input').focus();
+            }
         }
 
         function sendMessage() {
@@ -149,37 +111,47 @@
 
             if (!userText) return;
 
-            // 顯示使用者訊息
             msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-            
-            // 顯示思考中動畫
-            const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在搜尋資料庫...🐾</span></div>`;
+            input.value = '';
             msgBox.scrollTop = msgBox.scrollHeight;
 
-            // 觸發小工具搜尋
-            const widget = document.getElementById('kiki-ai-engine');
-            if (widget && typeof widget.search === 'function') {
-                widget.search(userText);
-            }
-            
-            input.value = '';
+            const loadingId = 'loading-' + Date.now();
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span>Kiki 正在連線雲端大腦...🐾</span></div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+
+            const widget = document.getElementById('kiki-brain');
+
+            // 2. 修正點：改進喚醒邏輯，確保元件初始化完成
+            let retryCount = 0;
+            const checkInterval = setInterval(() => {
+                retryCount++;
+                if (widget && typeof widget.search === 'function') {
+                    widget.search(userText); 
+                    clearInterval(checkInterval);
+                } else {
+                    document.getElementById('searchWidgetTrigger').click();
+                    if (retryCount >= 10) {
+                        const loadingEl = document.getElementById(loadingId);
+                        if (loadingEl) {
+                            loadingEl.innerHTML = "喵嗚... 連線發生錯誤。請確認廣告阻擋器已關閉，並檢查 GCP 網域限制。";
+                        }
+                        clearInterval(checkInterval);
+                    }
+                }
+            }, 1000);
         }
 
-        // 監聽小工具回傳答案
+        // 3. 監聽小工具回傳答案
         window.addEventListener('gen-search-widget-response', (event) => {
             const msgBox = document.getElementById('chat-messages');
-            
-            // 移除思考中動畫
-            const loadingDots = document.querySelectorAll('.typing-dots');
-            loadingDots.forEach(dot => {
-                if (dot.parentElement) dot.parentElement.remove();
+            const loadingMsgs = msgBox.querySelectorAll('.msg-ai span');
+            loadingMsgs.forEach(span => {
+                if (span.innerText.includes("正在連線")) span.parentElement.remove();
             });
 
-            // 提取答案
             const aiReply = event.detail.modelResponse?.answer?.answerText 
                         || event.detail.response?.answer 
-                        || "喵嗚... 雲端大腦回傳了空訊息，請換個問法試試看。🐾";
+                        || "喵嗚... 雲端大腦暫時無法回應，請換個問法試試看。🐾";
             
             msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
