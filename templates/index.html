@@ -2,6 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -45,7 +46,6 @@
 
         .social-practice { margin-top: 40px; padding: 30px; text-align: center; background: rgba(230, 126, 34, 0.08); border-radius: 20px; border: 2px dashed var(--accent); }
 
-        /* --- Kiki AI 客服樣式 --- */
         #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
         #chat-button { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; }
         #chat-button:hover { transform: scale(1.1); }
@@ -148,84 +148,72 @@
 
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
-        <gen-search-widget
+    <gen-search-widget
         configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
         triggerId="searchWidgetTrigger"
         style="display: none;">
-        </gen-search-widget>
-        <input type="hidden" id="searchWidgetTrigger">
+    </gen-search-widget>
+    <input type="hidden" id="searchWidgetTrigger">
 
-        <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
-
-        <script>
-            // 切換客服視窗顯示狀態
-            function toggleChat() {
-                const win = document.getElementById('chat-window');
-                win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-                if (win.style.display === 'flex') {
-                    const msgBox = document.getElementById('chat-messages');
-                    msgBox.scrollTop = msgBox.scrollHeight;
-                    document.getElementById('chat-input').focus();
-                }
-            }
-
-            // 修改後的發送函式：完全連動 API，不再使用寫死的 if-else 判斷
-            // 1. 將發送邏輯改為「等待檢查」模式
-            function sendMessage() {
-                const input = document.getElementById('chat-input');
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+            if (win.style.display === 'flex') {
                 const msgBox = document.getElementById('chat-messages');
-                const userText = input.value.trim();
-
-                if (!userText) return;
-
-                msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-                input.value = '';
                 msgBox.scrollTop = msgBox.scrollHeight;
+                document.getElementById('chat-input').focus();
+            }
+        }
 
-                const loadingId = 'loading-' + Date.now();
-                msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
-                msgBox.scrollTop = msgBox.scrollHeight;
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msgBox = document.getElementById('chat-messages');
+            const userText = input.value.trim();
 
-                const widget = document.querySelector('gen-search-widget');
+            if (!userText) return;
 
-                // 檢查點：確保 Google 組件已完全啟動
+            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+            input.value = '';
+            msgBox.scrollTop = msgBox.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+
+            const widget = document.querySelector('gen-search-widget');
+
+            // 2. 優化重試機制：延長至 10 秒並增加更精確的錯誤提示
+            let retryCount = 0;
+            const retryInterval = setInterval(() => {
+                retryCount++;
                 if (widget && typeof widget.search === 'function') {
                     widget.search(userText); 
-                } else {
-                    // 如果還沒準備好，每隔 1 秒嘗試一次，最多試 3 次
-                    let retryCount = 0;
-                    const retryInterval = setInterval(() => {
-                        retryCount++;
-                        if (widget && typeof widget.search === 'function') {
-                            widget.search(userText);
-                            clearInterval(retryInterval);
-                        } else if (retryCount >= 5) {
-                            const loadingEl = document.getElementById(loadingId);
-                            if (loadingEl) loadingEl.innerHTML = "喵嗚... 連線逾時，請檢查網路或重新整理網頁。";
-                            clearInterval(retryInterval);
-                        }
-                    }, 1000);
+                    clearInterval(retryInterval);
+                } else if (retryCount >= 10) {
+                    const loadingEl = document.getElementById(loadingId);
+                    if (loadingEl) {
+                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認 GCP 控制台是否已將網域加入白名單，或稍後再試。";
+                    }
+                    clearInterval(retryInterval);
                 }
-            }
+            }, 1000);
+        }
 
-            // 3. 增加成功回應監聽：這段沒加，AI 算完答案網頁也不會顯示！
-            window.addEventListener('gen-search-widget-response', (event) => {
-                const msgBox = document.getElementById('chat-messages');
-                
-                // 移除「正在連線」或「正在翻閱」的動畫標籤
-                const loadingDots = document.querySelectorAll('.typing-dots');
-                loadingDots.forEach(dot => {
-                    if (dot.parentElement) dot.parentElement.remove();
-                });
-
-                // 抓取 AI 回傳的摘要文字
-                const aiReply = event.detail.modelResponse?.answer?.answerText 
-                            || event.detail.response?.answer 
-                            || "喵嗚... 雲端大腦回傳了空訊息，請再試一次。🐾";
-                
-                msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
-                msgBox.scrollTop = msgBox.scrollHeight;
+        window.addEventListener('gen-search-widget-response', (event) => {
+            const msgBox = document.getElementById('chat-messages');
+            const loadingDots = document.querySelectorAll('.typing-dots');
+            loadingDots.forEach(dot => {
+                if (dot.parentElement) dot.parentElement.remove();
             });
-        </script>
-    </body>
+
+            const aiReply = event.detail.modelResponse?.answer?.answerText 
+                        || event.detail.response?.answer 
+                        || "喵嗚... 雲端大腦回傳了空訊息，請再試一次。🐾";
+            
+            msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
+            msgBox.scrollTop = msgBox.scrollHeight;
+        });
+    </script>
+</body>
 </html>
