@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
  
-    <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW&key=AIzaSyB-2EKGK-pKPjYpdEp76bMQboSodANCJW0"></script>
+    <!-- Widget JavaScript bundle -->
+    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
 
+    <!-- Search widget element is not visible by default -->
     <gen-search-widget
-    id="kiki-brain"
     configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-    triggerId="searchWidgetTrigger"
-    style="display: none;">
+    triggerId="searchWidgetTrigger">
     </gen-search-widget>
 
-    <input type="hidden" id="searchWidgetTrigger">
-
-    <div id="chat-window">
-        <div id="chat-header">Kiki 溫馨客服</div>
-        <div id="chat-messages"></div>
-        <div id="chat-input-area">
-            <input type="text" id="chat-input" placeholder="按 Enter 詢問..." onkeypress="if(event.keyCode==13) sendMessage()">
-        </div>
-    </div>    
+    <!-- Element that opens the widget on click. It does not have to be an input -->
+    <input placeholder="在這裡搜尋" id="searchWidgetTrigger" />  
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
@@ -53,7 +46,13 @@
 
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
         nav ul li { margin-left: 15px; }
-        nav ul li a { text-decoration: none; color: var(--text-dark); font-weight: bold; font-size: 0.95rem; transition: 0.3s; }
+        nav ul li a { 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-weight: bold; 
+            font-size: 0.95rem; 
+            transition: 0.3s; 
+        }
         nav ul li a:hover { color: var(--primary); }
 
         .page { padding: 30px 15px; max-width: 1000px; margin: 0 auto; }
