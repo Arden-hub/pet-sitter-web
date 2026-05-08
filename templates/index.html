@@ -43,42 +43,48 @@
 
         .home-hero { 
             text-align: center; 
-            /* 1. 縮小容器高度：將上下 padding 從 80px 縮減，這會讓底圖視覺上看起來更精簡 */
-            padding: 60px 20px; 
+            /* 增加 padding 撐開容器高度，底圖才不會顯得扁 */
+            padding: 100px 20px; 
             
             background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), 
-                        url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg');
+                        url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); 
             
-            /* 2. 底圖縮小：將 cover 改為 100% auto，圖片會以寬度為準縮小對齊，不會過度放大 */
+            /* 關鍵 1：不要用 cover，用 100% 寬度確保圖片完整，不被切到 Logo */
             background-size: 100% auto; 
-            background-repeat: no-repeat; /* 避免縮小後出現重複圖片 */
+            background-repeat: no-repeat;
+
+            /* 關鍵 2：50% 是水平置中（可微調），0% 讓圖片從最頂部開始顯示（視覺上圖會往下沉） */
+            /* 如果要再往右一點，將 50% 改成 60% */
+            background-position: 50% 0%; 
+
+            /* 容器寬度與置中 */
+            width: 95%;
+            max-width: 1200px; 
+            margin: 0 auto 30px; 
             
-            /* 維持您之前的上下位置設定 */
-            background-position: center 25%; 
-
-            /* 3. 容器置中與寬度調整 */
-            width: 90%;          /* 寬度設為螢幕的 90%，留出一點空間看置中效果 */
-            max-width: 1100px;   /* 設定最大寬度，避免在大螢幕上過寬 */
-            margin: 0 auto 30px; /* 這裡的 auto 是「水平置中」的關鍵 */
-            display: block;      /* 確保它是區塊元素以套用置中 */
-
             border-radius: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
+        
         .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
         .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
         
         .shop-section { display: flex; align-items: stretch; background: white; border-radius: 20px; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); flex-wrap: wrap; }
         .shop-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; }
+
         .shop-section img { 
             width: 100%; 
             height: 100%; 
+            
+            /* 改用 contain 確保整張圖片（包含 Logo）都在格子內不被切掉 */
+            /* 或者用 cover 搭配 object-position */
             object-fit: cover; 
-            display: block;
 
-            /* 調整重點：第一個值 70% 代表圖片內容向右對齊（視覺上圖會往右移） */
-            /* 第二個值 center 代表上下維持置中 */
-            object-position: 70% center; 
+            /* 調整重點：第一個值 0% 確保左側 Logo 貼齊邊緣不被切到，
+            如果您覺得 Logo 太擠，可以調成 10% 讓它往右移一點點 */
+            object-position: 10% center; 
+
+            display: block;
         }
 
         .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
