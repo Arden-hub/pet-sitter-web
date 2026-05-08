@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW&key=AIzaSyB-2EKGK-pKPjYpdEp76bMQboSodANCJW0"></script>
+    <!-- Widget JavaScript bundle -->
+    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+
+    <!-- Search widget element is not visible by default -->
+    <gen-search-widget
+    configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
+    triggerId="searchWidgetTrigger">
+    </gen-search-widget>
+
+    <!-- Element that opens the widget on click. It does not have to be an input -->
+    <input placeholder="在這裡搜尋" id="searchWidgetTrigger" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -16,7 +27,17 @@
 
         body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; background-color: var(--bg-warm); color: var(--text-dark); line-height: 1.6; }
         
-        nav { background: var(--card-bg); padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        nav { 
+            background: #5d4037; 
+            padding: 0.8rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }        
         .logo-container { display: flex; align-items: center; text-decoration: none; }
         .logo-img-wrapper { height: 50px; width: 50px; background: #fff; border-radius: 50%; margin-right: 12px; border: 2px solid var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .logo-img { height: 80%; width: 80%; object-fit: contain; }
