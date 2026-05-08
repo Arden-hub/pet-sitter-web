@@ -132,7 +132,6 @@
                 <div class="msg msg-ai">
                     喵嗚～歡迎來到鏟屎官到你家！🐾<br>
                     我是最愛毛孩的 AI 助教 <strong>Kiki</strong>。❤️<br><br>
-                    爸爸媽媽出門遠行時，別擔心，Kiki 和夥伴們會像家人一樣守護著寶貝！✨<br><br>
                     想多了解我們嗎？輸入關鍵字讓 Kiki 為你解答：<br>
                     💰 <strong>「多少錢」</strong>：服務收費與細節<br>
                     🐱 <strong>「保母」</strong>：認識專業的夥伴<br>
@@ -149,7 +148,7 @@
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
     <gen-search-widget
-        id="kiki-search-widget"
+        id="kiki-brain"
         configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
         triggerId="searchWidgetTrigger"
         style="display: none;">
@@ -182,24 +181,27 @@
             msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
 
-            // 修正 3: 確保使用 getElementById 並指向正確的元件
-            const widget = document.getElementById('kiki-search-widget');
+            const widget = document.getElementById('kiki-brain');
 
+            // 3. 改進版連線邏輯：如果大腦還沒好，自動嘗試點擊隱藏的 trigger 來喚醒它
             let retryCount = 0;
-            const retryLimit = 15; // 增加重試次數確保 SDK 下載完畢
-            
-            const retryInterval = setInterval(() => {
+            const checkInterval = setInterval(() => {
                 retryCount++;
-                // 檢查 search 是否已經由 Google SDK 注入
+                
                 if (widget && typeof widget.search === 'function') {
                     widget.search(userText); 
-                    clearInterval(retryInterval);
-                } else if (retryCount >= retryLimit) {
-                    const loadingEl = document.getElementById(loadingId);
-                    if (loadingEl) {
-                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認廣告阻擋器 (AdBlock) 是否關閉，或重新整理網頁再試。";
+                    clearInterval(checkInterval);
+                } else {
+                    // 自動喚醒機制：點擊 trigger 誘發元件初始化
+                    document.getElementById('searchWidgetTrigger').click();
+                    
+                    if (retryCount >= 15) { // 延長至 15 秒，給 Cloud Run 更多時間
+                        const loadingEl = document.getElementById(loadingId);
+                        if (loadingEl) {
+                            loadingEl.innerHTML = "喵嗚... 大腦啟動失敗。請確認：<br>1. 廣告阻擋器 (AdBlock) 已關閉。<br>2. GCP 網域白名單已生效。";
+                        }
+                        clearInterval(checkInterval);
                     }
-                    clearInterval(retryInterval);
                 }
             }, 1000);
         }
