@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+    <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -182,19 +182,22 @@
             msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
 
+            // 修正 3: 確保使用 getElementById 並指向正確的元件
             const widget = document.getElementById('kiki-search-widget');
 
-            // 修復點：增加顯式檢查與重試時間
             let retryCount = 0;
+            const retryLimit = 15; // 增加重試次數確保 SDK 下載完畢
+            
             const retryInterval = setInterval(() => {
                 retryCount++;
+                // 檢查 search 是否已經由 Google SDK 注入
                 if (widget && typeof widget.search === 'function') {
                     widget.search(userText); 
                     clearInterval(retryInterval);
-                } else if (retryCount >= 10) {
+                } else if (retryCount >= retryLimit) {
                     const loadingEl = document.getElementById(loadingId);
                     if (loadingEl) {
-                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認廣告阻擋器 (AdBlock) 是否關閉，或稍後再試。";
+                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認廣告阻擋器 (AdBlock) 是否關閉，或重新整理網頁再試。";
                     }
                     clearInterval(retryInterval);
                 }
