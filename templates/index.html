@@ -2,7 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -132,11 +131,7 @@
                 <div class="msg msg-ai">
                     喵嗚～歡迎來到鏟屎官到你家！🐾<br>
                     我是最愛毛孩的 AI 助教 <strong>Kiki</strong>。❤️<br><br>
-                    想多了解我們嗎？輸入關鍵字讓 Kiki 為你解答：<br>
-                    💰 <strong>「多少錢」</strong>：服務收費與細節<br>
-                    🐱 <strong>「保母」</strong>：認識專業的夥伴<br>
-                    📍 <strong>「地區」</strong>：看我們去哪裡服務<br>
-                    📅 <strong>「預約」</strong>：開啟溫馨照顧之旅
+                    有任何關於服務、收費、或保母的問題，儘管問我喵！
                 </div>
             </div>
             <div id="chat-input-area">
@@ -147,79 +142,58 @@
 
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
-    <gen-search-widget
-        id="kiki-brain"
-        configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-        triggerId="searchWidgetTrigger"
-        style="display: none;">
-    </gen-search-widget>
-    <input type="hidden" id="searchWidgetTrigger">
-
     <script>
         function toggleChat() {
             const win = document.getElementById('chat-window');
             win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
             if (win.style.display === 'flex') {
-                const msgBox = document.getElementById('chat-messages');
-                msgBox.scrollTop = msgBox.scrollHeight;
                 document.getElementById('chat-input').focus();
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('chat-input');
             const msgBox = document.getElementById('chat-messages');
             const userText = input.value.trim();
 
             if (!userText) return;
 
+            // 顯示使用者訊息
             msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
             input.value = '';
             msgBox.scrollTop = msgBox.scrollHeight;
 
+            // 顯示思考中狀態
             const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在詢問雲端大腦...喵...</span></div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
 
-            const widget = document.getElementById('kiki-brain');
+            try {
+                // 向後端 API 發送請求 (請確保後端已實作 /ask_kiki 路由)
+                const response = await fetch('/ask_kiki', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: userText })
+                });
 
-            // 3. 改進版連線邏輯：如果大腦還沒好，自動嘗試點擊隱藏的 trigger 來喚醒它
-            let retryCount = 0;
-            const checkInterval = setInterval(() => {
-                retryCount++;
+                const data = await response.json();
                 
-                if (widget && typeof widget.search === 'function') {
-                    widget.search(userText); 
-                    clearInterval(checkInterval);
-                } else {
-                    // 自動喚醒機制：點擊 trigger 誘發元件初始化
-                    document.getElementById('searchWidgetTrigger').click();
-                    
-                    if (retryCount >= 15) { // 延長至 15 秒，給 Cloud Run 更多時間
-                        const loadingEl = document.getElementById(loadingId);
-                        if (loadingEl) {
-                            loadingEl.innerHTML = "喵嗚... 大腦啟動失敗。請確認：<br>1. 廣告阻擋器 (AdBlock) 已關閉。<br>2. GCP 網域白名單已生效。";
-                        }
-                        clearInterval(checkInterval);
-                    }
+                // 移除思考中動畫
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                // 顯示 AI 回傳的答案
+                const aiReply = data.answer || "喵嗚... 腦袋空空的，請再試一次。🐾";
+                msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
+                
+            } catch (error) {
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.innerHTML = "喵嗚... 連線發生錯誤，請檢查後端服務。";
                 }
-            }, 1000);
-        }
-
-        window.addEventListener('gen-search-widget-response', (event) => {
-            const msgBox = document.getElementById('chat-messages');
-            const loadingDots = document.querySelectorAll('.typing-dots');
-            loadingDots.forEach(dot => {
-                if (dot.parentElement) dot.parentElement.remove();
-            });
-
-            const aiReply = event.detail.modelResponse?.answer?.answerText 
-                        || event.detail.response?.answer 
-                        || "喵嗚... 雲端大腦回傳了空訊息，請再試一次。🐾";
-            
-            msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
+            }
             msgBox.scrollTop = msgBox.scrollHeight;
-        });
+        }
     </script>
 </body>
 </html>
