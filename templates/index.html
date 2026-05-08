@@ -208,11 +208,23 @@
                 }
             }
 
-            // 2. 增加錯誤監聽，如果是權限問題，直接彈出提示
-            window.addEventListener('gen-search-widget-error', (event) => {
-                console.error("API 發生錯誤:", event.detail);
+            // 3. 增加成功回應監聽：這段沒加，AI 算完答案網頁也不會顯示！
+            window.addEventListener('gen-search-widget-response', (event) => {
                 const msgBox = document.getElementById('chat-messages');
-                msgBox.innerHTML += `<div class="msg msg-ai">喵... 好像是權限被擋住了 (Error: ${event.detail.status})，請管理員檢查 GCP 公開存取設定。</div>`;
+                
+                // 移除「正在連線」或「正在翻閱」的動畫標籤
+                const loadingDots = document.querySelectorAll('.typing-dots');
+                loadingDots.forEach(dot => {
+                    if (dot.parentElement) dot.parentElement.remove();
+                });
+
+                // 抓取 AI 回傳的摘要文字
+                const aiReply = event.detail.modelResponse?.answer?.answerText 
+                            || event.detail.response?.answer 
+                            || "喵嗚... 雲端大腦回傳了空訊息，請再試一次。🐾";
+                
+                msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
+                msgBox.scrollTop = msgBox.scrollHeight;
             });
         </script>
     </body>
