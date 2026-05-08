@@ -43,19 +43,25 @@
 
         .home-hero { 
             text-align: center; 
-            padding: 80px 20px; 
+            /* 1. 縮小容器高度：將上下 padding 從 80px 縮減，這會讓底圖視覺上看起來更精簡 */
+            padding: 60px 20px; 
+            
             background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), 
-                        url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); 
-            background-size: cover; 
+                        url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg');
             
-            /* 1. 底圖位置：第一個數值是左右置中，第二個 20% 讓圖片內容往下降（顯示更多上方內容） */
-            background-position: center 20%; 
+            /* 2. 底圖縮小：將 cover 改為 100% auto，圖片會以寬度為準縮小對齊，不會過度放大 */
+            background-size: 100% auto; 
+            background-repeat: no-repeat; /* 避免縮小後出現重複圖片 */
             
-            /* 2. 容器寬度：設定為 100% 並調大 max-width 或直接移除來增加寬度 */
-            width: 100%;
-            max-width: 1200px; /* 您可以根據需求調大這個數值，例如 1400px 或刪除這行變全螢幕 */
-            margin: 0 auto 30px; /* 增加 auto 確保容器在大螢幕時能水平居中 */
-            
+            /* 維持您之前的上下位置設定 */
+            background-position: center 25%; 
+
+            /* 3. 容器置中與寬度調整 */
+            width: 90%;          /* 寬度設為螢幕的 90%，留出一點空間看置中效果 */
+            max-width: 1100px;   /* 設定最大寬度，避免在大螢幕上過寬 */
+            margin: 0 auto 30px; /* 這裡的 auto 是「水平置中」的關鍵 */
+            display: block;      /* 確保它是區塊元素以套用置中 */
+
             border-radius: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
         }
@@ -64,7 +70,17 @@
         
         .shop-section { display: flex; align-items: stretch; background: white; border-radius: 20px; margin-bottom: 30px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); flex-wrap: wrap; }
         .shop-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; }
-        .shop-section img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .shop-section img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block;
+
+            /* 調整重點：第一個值 70% 代表圖片內容向右對齊（視覺上圖會往右移） */
+            /* 第二個值 center 代表上下維持置中 */
+            object-position: 70% center; 
+        }
+
         .shop-info { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-width: 300px; }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 40px; }
