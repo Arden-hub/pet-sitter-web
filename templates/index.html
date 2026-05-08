@@ -2,12 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <script async src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+
+    <!-- Widget JavaScript bundle -->
+    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+
+    <!-- Search widget element is not visible by default -->
     <gen-search-widget
-        id="kiki-brain"
-        configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-        triggerId="searchWidgetTrigger"
-        style="display: none;">
+    configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
+    triggerId="searchWidgetTrigger">
     </gen-search-widget>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
