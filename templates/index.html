@@ -2,16 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
- 
-    <!-- Widget JavaScript bundle -->
-    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
-
-    <!-- Search widget element is not visible by default -->
-    <gen-search-widget
-    configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-    triggerId="searchWidgetTrigger">
-    </gen-search-widget> 
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>鏟屎官到你家 - 專業到府餵養服務</title>
     <style>
@@ -77,7 +67,7 @@
         #chat-window { display: none; width: 320px; height: 450px; background: white; position: absolute; bottom: 80px; right: 0; border-radius: 20px; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #eee; }
         #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         #chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--bg-warm); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; }
+        .msg { padding: 10px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.4; word-wrap: break-word; }
         .msg-ai { background: white; align-self: flex-start; border: 1px solid #eee; color: var(--text-dark); }
         .msg-user { background: var(--accent); align-self: flex-end; color: var(--text-dark); }
         #chat-input-area { padding: 10px; display: flex; border-top: 1px solid #eee; background: #fff; }
@@ -85,23 +75,12 @@
         .typing-dots { color: #888; font-size: 0.8rem; }
 
         footer { text-align: center; padding: 40px; color: #bcaaa4; font-size: 0.85rem; }
-
-        /* 強制隱藏 Google 原廠搜尋小工具的按鈕 */
-        .df-messenger-wrapper, 
-        gen-search-widget {
-            --gen-search-widget-launcher-display: none !important;
-        }
-
-        #df-messenger-wrapper {
-            display: none !important;
-        }
-
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="index.html" class="logo-container">
+        <a href="index" class="logo-container">
             <div class="logo-img-wrapper"><img src="https://storage.googleapis.com/pet-sitter-images/index_images/kiki.png" class="logo-img"></div>
             <span class="logo-text">鏟屎官到你家</span>
         </a>
@@ -182,15 +161,10 @@
 
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
-    <gen-search-widget
-        id="kiki-brain"
-        configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
-        triggerId="searchWidgetTrigger"
-        style="display: none;">
-    </gen-search-widget>
-    <input type="hidden" id="searchWidgetTrigger">
-
     <script>
+        // 用來記錄目前的對話 Session
+        let currentSessionId = "-";
+
         function toggleChat() {
             const win = document.getElementById('chat-window');
             win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
@@ -208,53 +182,46 @@
 
             if (!userText) return;
 
+            // 1. 顯示使用者發送的訊息
             msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
             input.value = '';
             msgBox.scrollTop = msgBox.scrollHeight;
 
+            // 2. 顯示 Kiki 正在思考的動畫
             const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
+            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線大腦...喵...</span></div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
 
-            const widget = document.getElementById('kiki-brain');
-
-            // 3. 改進版連線邏輯：如果大腦還沒好，自動嘗試點擊隱藏的 trigger 來喚醒它
-            let retryCount = 0;
-            const checkInterval = setInterval(() => {
-                retryCount++;
+            // 3. 呼叫後端的 kiki_chat API
+            fetch('/api/kiki_chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: userText, 
+                    session_id: currentSessionId 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 移除思考動畫
+                document.getElementById(loadingId).remove();
                 
-                if (widget && typeof widget.search === 'function') {
-                    widget.search(userText); 
-                    clearInterval(checkInterval);
-                } else {
-                    // 自動喚醒機制：點擊 trigger 誘發元件初始化
-                    document.getElementById('searchWidgetTrigger').click();
-                    
-                    if (retryCount >= 15) { // 延長至 15 秒，給 Cloud Run 更多時間
-                        const loadingEl = document.getElementById(loadingId);
-                        if (loadingEl) {
-                            loadingEl.innerHTML = "喵嗚... 大腦啟動失敗。請確認：<br>1. 廣告阻擋器 (AdBlock) 已關閉。<br>2. GCP 網域白名單已生效。";
-                        }
-                        clearInterval(checkInterval);
-                    }
+                // 更新 Session ID (維持連貫對話)
+                currentSessionId = data.session_id;
+
+                // 將回傳的純文字轉換為 HTML 支援的換行 (<br>) 後顯示
+                const formattedReply = data.reply.replace(/\n/g, '<br>');
+                msgBox.innerHTML += `<div class="msg msg-ai">${formattedReply}</div>`;
+                msgBox.scrollTop = msgBox.scrollHeight;
+            })
+            .catch(error => {
+                console.error("API 錯誤:", error);
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.innerHTML = "喵嗚... 連線發生錯誤，請確認後端服務已啟動。";
                 }
-            }, 1000);
-        }
-
-        window.addEventListener('gen-search-widget-response', (event) => {
-            const msgBox = document.getElementById('chat-messages');
-            const loadingDots = document.querySelectorAll('.typing-dots');
-            loadingDots.forEach(dot => {
-                if (dot.parentElement) dot.parentElement.remove();
             });
-
-            const aiReply = event.detail.modelResponse?.answer?.answerText 
-                        || event.detail.response?.answer 
-                        || "喵嗚... 雲端大腦回傳了空訊息，請再試一次。🐾";
-            
-            msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
-            msgBox.scrollTop = msgBox.scrollHeight;
-        });
+        }
     </script>
 </body>
 </html>
