@@ -28,7 +28,7 @@
 
         body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; background-color: var(--bg-warm); color: var(--text-dark); line-height: 1.6; }
         
-        nav { background: #976353; padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        nav { background: #634136; padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .logo-container { display: flex; align-items: center; text-decoration: none; }
         .logo-img-wrapper { height: 50px; width: 50px; background: #e67e22; border-radius: 50%; margin-right: 12px; border: 2px solid var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .logo-img { height: 80%; width: 80%; object-fit: contain; }
@@ -41,7 +41,19 @@
 
         .page { padding: 30px 8px; max-width: 1000px; margin: 0 auto; }
 
-        .home-hero { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(255, 249, 240, 0.85), rgba(255, 249, 240, 0.85)), url('https://storage.googleapis.com/pet-sitter-images/index_images/index-1.jpg'); background-size: cover; background-position: center; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .home-hero { 
+            /* ... 其他屬性保持不變 ... */
+            background-size: cover; 
+            
+            /* 調整重點：使用 top 或是 0%~20% 的數值 */
+            /* 這會將圖片的頂部對齊容器頂部，視覺上內容會往下推 */
+            background-position: center top; 
+            
+            /* 如果覺得太靠上，可以微調百分比，例如 center 10% */
+            width: 100%; 
+            box-sizing: border-box;
+        }
+        
         .home-hero h2 { color: var(--primary); font-size: 2.2rem; margin: 0; }
         .slogan { font-size: 1.4rem; font-style: italic; color: #a1887f; margin: 30px 0; text-align: center; font-weight: bold; }
         
