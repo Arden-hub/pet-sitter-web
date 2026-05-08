@@ -177,20 +177,29 @@
 
                 if (!userText) return;
 
-                // 1. 在 UI 顯示使用者文字
+                // 1. 顯示使用者文字
                 msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
                 input.value = '';
                 msgBox.scrollTop = msgBox.scrollHeight;
 
-                // 2. 顯示 Kiki 思考中動畫
+                // 2. 顯示思考中動畫
                 const loadingId = 'loading-' + Date.now();
                 msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在翻閱手冊中...喵...</span></div>`;
                 msgBox.scrollTop = msgBox.scrollHeight;
 
-                // 3. 關鍵動作：驅動 Google Widget 開始對雲端文件進行搜尋 (主動觸發 API)
+                // 3. 關鍵修正：確保 widget 存在且具備 search 功能
                 const widget = document.querySelector('gen-search-widget');
-                if (widget) {
+                
+                // 如果 widget 準備好了，就執行搜尋
+                if (widget && typeof widget.search === 'function') {
                     widget.search(userText); 
+                } else {
+                    // 如果還沒準備好，移除動畫並提示 Kiki 還在熱機
+                    setTimeout(() => {
+                        const loadingMsg = document.getElementById(loadingId);
+                        if (loadingMsg) loadingMsg.innerHTML = "喵嗚... Kiki 的大腦還在連線中，請稍等 3 秒後再試試看！";
+                    }, 1500);
+                    console.error("Google Search Widget 尚未加載完成或初始化失敗。");
                 }
             }
 
