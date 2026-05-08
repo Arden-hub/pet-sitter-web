@@ -72,8 +72,8 @@
         <ul>
             <li><a href="index">首頁</a></li>
             <li><a href="nanny">保母介紹</a></li>
-            <li><a href="https://asia-east1-project-c5b7a50f-7f60-4d2c-8a9.cloudfunctions.net/calculator_service" target="_blank">費用試算</a></li>
-            <li><a href="http://goo.gl/QJfH3R" target="_blank">預約服務</a></li>
+            <li><a href="kiki_playergame" target="_blank">Kiki小遊戲</a></li>
+            <li><a href="https://pet-sitter-api-91777479966.asia-east1.run.app">預約服務</a></li>
             <li><a href="feedback">意見回饋</a></li>
         </ul>
     </nav>
@@ -148,60 +148,72 @@
 
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
-    <script>
-        function toggleChat() {
-            const win = document.getElementById('chat-window');
-            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
-            if (win.style.display === 'flex') {
+        <gen-search-widget
+        configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
+        triggerId="searchWidgetTrigger"
+        style="display: none;">
+        </gen-search-widget>
+        <input type="hidden" id="searchWidgetTrigger">
+
+        <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=zh_TW"></script>
+
+        <script>
+            // 切換客服視窗顯示狀態
+            function toggleChat() {
+                const win = document.getElementById('chat-window');
+                win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+                if (win.style.display === 'flex') {
+                    const msgBox = document.getElementById('chat-messages');
+                    msgBox.scrollTop = msgBox.scrollHeight;
+                    document.getElementById('chat-input').focus();
+                }
+            }
+
+            // 修改後的發送函式：完全連動 API，不再使用寫死的 if-else 判斷
+            function sendMessage() {
+                const input = document.getElementById('chat-input');
                 const msgBox = document.getElementById('chat-messages');
+                const userText = input.value.trim();
+
+                if (!userText) return;
+
+                // 1. 在 UI 顯示使用者文字
+                msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
+                input.value = '';
                 msgBox.scrollTop = msgBox.scrollHeight;
-                document.getElementById('chat-input').focus();
-            }
-        }
 
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const msgBox = document.getElementById('chat-messages');
-            const userText = input.value.trim();
-
-            if (!userText) return;
-
-            msgBox.innerHTML += `<div class="msg msg-user">${userText}</div>`;
-            input.value = '';
-            msgBox.scrollTop = msgBox.scrollHeight;
-
-            const loadingId = 'loading-' + Date.now();
-            msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在思考中...喵...</span></div>`;
-            msgBox.scrollTop = msgBox.scrollHeight;
-
-            setTimeout(() => {
-                const loadingEl = document.getElementById(loadingId);
-                loadingEl.innerHTML = getKikiResponse(userText);
+                // 2. 顯示 Kiki 思考中動畫
+                const loadingId = 'loading-' + Date.now();
+                msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在翻閱手冊中...喵...</span></div>`;
                 msgBox.scrollTop = msgBox.scrollHeight;
-            }, 800);
-        }
 
-        function getKikiResponse(text) {
-            const t = text.toLowerCase();
-            
-            if (t.includes("多少錢") || t.includes("費用") || t.includes("價格")) {
-                return "喵～ Kiki 知道爸媽都很注重CP值！我們的到府服務 <strong>500 元起</strong>。🐾<br>您可以點選上面的『費用試算』，根據寶貝的需求算算最精確的預算喔！汪！";
+                // 3. 關鍵動作：驅動 Google Widget 開始對雲端文件進行搜尋 (主動觸發 API)
+                const widget = document.querySelector('gen-search-widget');
+                if (widget) {
+                    widget.search(userText); 
+                }
             }
-            if (t.includes("地區") || t.includes("哪裡")) {
-                return "不論在『<strong>台北、桃園、台中</strong>』，只要有毛孩的地方，我們就盡量趕過去！喵嗚～<br>如果您不確定家裡是否在範圍內，可以先跟 Kiki 說您的區域喔！";
-            }
-            if (t.includes("保母") || t.includes("夥伴")) {
-                return "我們的保母夥伴都是超級貓奴狗僕！❤️<br>像是 <strong>Mio</strong>、<strong>阿強</strong> 他們都有好多年的照顧經驗。您可以去『保母介紹』看看他們的個人檔案與好評喔！";
-            }
-            if (t.includes("預約")) {
-                return "準備好要把寶貝交給我們了嗎？Kiki 好期待喔！✨<br>請點擊『<strong>預約服務</strong>』按鈕開啟表單，填完後，Kiki 的爸爸會用最快的速度跟您聯繫喵！";
-            }
-            if (t.includes("你好") || t.includes("哈囉") || t.includes("hello")) {
-                return "喵嗚～您好呀！看到您真開心，今天有什麼 Kiki 可以幫上忙的地方嗎？🐾";
-            }
-            return `喵嗚～關於「${text}」，Kiki 還在努力學習中。🐾<br>不過您可以先試試詢問<strong>價格、保母介紹、或是預約方式</strong>喔！`;
-        }
-    </script>
 
-</body>
+            // 核心監聽邏輯：當 Google AI 算出答案後，會自動觸發這個事件將答案傳回網頁
+            window.addEventListener('gen-search-widget-response', (event) => {
+                const msgBox = document.getElementById('chat-messages');
+                
+                // A. 移除思考中的動畫
+                const loadingDots = document.querySelectorAll('.typing-dots');
+                loadingDots.forEach(dot => {
+                    if (dot.parentElement) dot.parentElement.remove();
+                });
+
+                // B. 解析從 API 回傳的 AI 摘要回答
+                const response = event.detail.modelResponse;
+                const aiReply = response?.answer?.answerText 
+                            || event.detail.response?.answer 
+                            || "喵嗚... Kiki 剛才分心了，可以再問一次嗎？🐾";
+                
+                // C. 顯示 AI 回答並自動捲動到最下方
+                msgBox.innerHTML += `<div class="msg msg-ai">${aiReply}</div>`;
+                msgBox.scrollTop = msgBox.scrollHeight;
+            });
+        </script>
+    </body>
 </html>
