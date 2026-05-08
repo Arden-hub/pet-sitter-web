@@ -149,6 +149,7 @@
     <footer>Copyright © 2026 『鏟屎官到你家』 All Rights Reserved.</footer>
 
     <gen-search-widget
+        id="kiki-search-widget"
         configId="3fa2d66d-6f63-451b-9a01-c8ec85837cf8"
         triggerId="searchWidgetTrigger"
         style="display: none;">
@@ -181,9 +182,9 @@
             msgBox.innerHTML += `<div class="msg msg-ai" id="${loadingId}"><span class="typing-dots">Kiki 正在連線雲端大腦...喵...</span></div>`;
             msgBox.scrollTop = msgBox.scrollHeight;
 
-            const widget = document.querySelector('gen-search-widget');
+            const widget = document.getElementById('kiki-search-widget');
 
-            // 2. 優化重試機制：延長至 10 秒並增加更精確的錯誤提示
+            // 修復點：增加顯式檢查與重試時間
             let retryCount = 0;
             const retryInterval = setInterval(() => {
                 retryCount++;
@@ -193,7 +194,7 @@
                 } else if (retryCount >= 10) {
                     const loadingEl = document.getElementById(loadingId);
                     if (loadingEl) {
-                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認 GCP 控制台是否已將網域加入白名單，或稍後再試。";
+                        loadingEl.innerHTML = "喵嗚... 雲端大腦啟動較慢。請確認廣告阻擋器 (AdBlock) 是否關閉，或稍後再試。";
                     }
                     clearInterval(retryInterval);
                 }
